@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Color;
 
@@ -30,12 +32,12 @@ public class Roadline extends ApplicationAdapter {
 	private float roadWidth, outlineWidth, lineWidth;
 	private Color bgColor, outlineColor, roadColor, lineColor;
 
-	private LinkedList<Texture> treeTextures;
+	TextureAtlas textureAtlas;
+	LinkedList<Sprite> treeSprites;
 
 	SpriteBatch batch;
 	BitmapFont font;
 	ShapeRenderer shapeRenderer;
-	Texture treeTexture;
 
 	@Override
 	public void create () {
@@ -53,25 +55,16 @@ public class Roadline extends ApplicationAdapter {
         roadColor = new Color(0.565F, 0.565F, 0.565F, 1);
         lineColor = new Color(0.929f, 0.765f, 0.271f,1);
 
+        textureAtlas = new TextureAtlas("trees.atlas");
+
+        treeSprites = new LinkedList<Sprite>();
+        for (i = 0; i < 5; i++) {
+        	treeSprites.add(textureAtlas.createSprite("tree"+i));
+		}
+
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		shapeRenderer = new ShapeRenderer();
-		treeTexture = new Texture(Gdx.files.internal("tree.png"));
-
-		treeTextures = new LinkedList<Texture>();
-
-		Pixmap pixmapOriginal = new Pixmap(Gdx.files.internal("tree.png"));
-		Pixmap pixmapResized = null;
-		for (i = 0; i < 5; i++) {
-			pixmapResized = new Pixmap(
-					100 + 50*i,
-					(int) ((100 + 50*i) * ((float) pixmapOriginal.getHeight() / (float) pixmapOriginal.getWidth())),
-					pixmapOriginal.getFormat());
-
-			treeTextures.add(new Texture(pixmapResized));
-		}
-		pixmapOriginal.dispose();
-		pixmapResized.dispose();
 
 		Gdx.input.setInputProcessor(new InputAdapter(){
 			@Override
@@ -126,7 +119,7 @@ public class Roadline extends ApplicationAdapter {
 	}
 
 	private String score;
-	private Texture currTree;
+	private Sprite currTree;
 
 	private void draw() {
 		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
@@ -171,10 +164,11 @@ public class Roadline extends ApplicationAdapter {
 
 		for (i = 1; i < controller.getTreePoints().size(); i++) {
 			currPoint = controller.getTreePoints().get(i);
-			currTree = treeTextures.get(((TreePointF) currPoint).size);
+			currTree = treeSprites.get(((TreePointF) currPoint).size);
 
-			if (currPoint.x < width + treeTexture.getWidth())
-				batch.draw(treeTexture, currPoint.x - treeTexture.getWidth()/2, currPoint.y - treeTexture.getHeight());
+			if (currPoint.x < width + currTree.getWidth())
+				currTree.setPosition(currPoint.x - currTree.getWidth()/2, currPoint.y);
+				currTree.draw(batch);
 		}
 
 		score = ""+Math.round(controller.getScore()*10.0)/10.0;
@@ -194,5 +188,6 @@ public class Roadline extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		textureAtlas.dispose();
 	}
 }
