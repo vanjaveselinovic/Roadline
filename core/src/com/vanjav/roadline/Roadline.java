@@ -166,9 +166,10 @@ public class Roadline extends ApplicationAdapter {
 			currPoint = controller.getTreePoints().get(i);
 			currTree = treeSprites.get(((TreePointF) currPoint).size);
 
-			if (currPoint.x < width + currTree.getWidth())
-				currTree.setPosition(currPoint.x - currTree.getWidth()/2, currPoint.y);
+			if (currPoint.x < width + currTree.getWidth()) {
+				currTree.setPosition(currPoint.x - currTree.getWidth() / 2, currPoint.y);
 				currTree.draw(batch);
+			}
 		}
 
 		score = ""+Math.round(controller.getScore()*10.0)/10.0;
