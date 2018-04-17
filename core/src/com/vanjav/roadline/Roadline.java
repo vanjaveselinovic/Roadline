@@ -18,7 +18,6 @@ import java.util.LinkedList;
 public class Roadline extends ApplicationAdapter {
 	private int width;
 	private int height;
-	private long previousFrameNanos;
 	private float currX, currY;
 
 	private boolean paused = false;
@@ -44,17 +43,6 @@ public class Roadline extends ApplicationAdapter {
 	    width = Gdx.graphics.getWidth();
 	    height =  Gdx.graphics.getHeight();
 
-        controller = new Controller(width, height);
-
-        roadWidth = controller.getRoadWidth();
-        outlineWidth = controller.getOutlineWidth();
-        lineWidth = controller.getLineWidth();
-
-        bgColor = new Color(0.459F, 0.714F, 0.282F, 1);
-        outlineColor = new Color(0.431F, 0.686F, 0.255F, 1);
-        roadColor = new Color(0.565F, 0.565F, 0.565F, 1);
-        lineColor = new Color(0.929f, 0.765f, 0.271f,1);
-
         textureAtlas = new TextureAtlas("trees.atlas");
 
         treeSprites = new LinkedList<Sprite>();
@@ -69,7 +57,10 @@ public class Roadline extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(new InputAdapter(){
 			@Override
 			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				if (gameOver) return false;
+				if (gameOver) {
+					startNewGame();
+					return true;
+				}
 
 				currX = screenX;
 				currY = height - screenY;
@@ -93,6 +84,8 @@ public class Roadline extends ApplicationAdapter {
 				return true;
 			}
 		});
+
+		startNewGame();
 	}
 
 	public void gameOver() {
@@ -100,6 +93,22 @@ public class Roadline extends ApplicationAdapter {
 			gameOver = true;
 			// show restart menu
 		}
+	}
+
+	public void startNewGame() {
+		controller = new Controller(width, height);
+
+		roadWidth = controller.getRoadWidth();
+		outlineWidth = controller.getOutlineWidth();
+		lineWidth = controller.getLineWidth();
+
+		bgColor = new Color(0.459F, 0.714F, 0.282F, 1);
+		outlineColor = new Color(0.431F, 0.686F, 0.255F, 1);
+		roadColor = new Color(0.565F, 0.565F, 0.565F, 1);
+		lineColor = new Color(0.929f, 0.765f, 0.271f,1);
+
+		gameStarted = false;
+		gameOver = false;
 	}
 
 	@Override
