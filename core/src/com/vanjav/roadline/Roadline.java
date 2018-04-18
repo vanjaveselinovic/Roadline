@@ -101,7 +101,7 @@ public class Roadline extends ApplicationAdapter {
 	}
 
 	public void startNewGame() {
-		controller = new Controller(width, height, density);
+		controller = new Controller(width, height, density, textureAtlas.findRegion("tree4").getRegionWidth());
 
 		roadWidth = controller.getRoadWidth();
 		outlineWidth = controller.getOutlineWidth();

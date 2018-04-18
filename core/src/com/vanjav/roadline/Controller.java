@@ -24,7 +24,7 @@ public class Controller {
     private LinkedList<PointF> treePointsToRemove;
     private float biggestTreeWidth;
 
-    public Controller (int width, int height, float density) {
+    public Controller (int width, int height, float density, int biggestTreeWidth) {
         linePoints = new LinkedList<PointF>();
         roadPoints = new LinkedList<PointF>();
         firstLinePointToKeep = 0;
@@ -41,7 +41,7 @@ public class Controller {
         roadWidth = 0.5f * this.dpi;       // 0.5 inches
         lineWidth = roadWidth * 0.1f;      // 0.1 of road
         outlineWidth = roadWidth * 1.75f;  // 1.75 of road
-        biggestTreeWidth = 350;
+        this.biggestTreeWidth = biggestTreeWidth;
 
         random = new Random();
 
@@ -264,12 +264,12 @@ public class Controller {
         offsetX = -1*width*(deltaTimeSeconds/crossTime);
 
         if (roadPoints.size() > 0) {
-            roadPoints.getFirst().offset(offsetX * (0.75f + 0.5f*((height - roadPoints.getFirst().y)/height)), 0);
+            roadPoints.getFirst().offset(offsetX * (0.85f + 0.3f*((height - roadPoints.getFirst().y)/height)), 0);
             firstRoadPointToKeep = 0;
 
             for (l = 1; l < roadPoints.size(); l++) {
                 currPoint = roadPoints.get(l);
-                currPoint.offset(offsetX * (0.75f + 0.5f*((height - currPoint.y)/height)), 0);
+                currPoint.offset(offsetX * (0.85f + 0.3f*((height - currPoint.y)/height)), 0);
 
                 if (currPoint.x < 0 - outlineWidth)
                     firstRoadPointToKeep = l - 1;
@@ -283,7 +283,7 @@ public class Controller {
 
             for (l = 0; l < treePoints.size(); l++) {
                 currPoint = treePoints.get(l);
-                currPoint.offset(offsetX * (0.75f + 0.5f*((height - currPoint.y)/height)), 0);
+                currPoint.offset(offsetX * (0.85f + 0.3f*((height - currPoint.y)/height)), 0);
 
                 if (currPoint.x < -1 * width - biggestTreeWidth)
                     treePointsToRemove.add(currPoint);
@@ -295,12 +295,12 @@ public class Controller {
         if (linePoints.size() > 0) {
             pointToKeepFound = false;
 
-            linePoints.getFirst().offset(offsetX * (0.75f + 0.5f*((height - linePoints.getFirst().y)/height)), 0);
+            linePoints.getFirst().offset(offsetX * (0.85f + 0.3f*((height - linePoints.getFirst().y)/height)), 0);
             firstLinePointToKeep = 0;
 
             for (l = 1; l < linePoints.size(); l++) {
                 currPoint = linePoints.get(l);
-                currPoint.offset(offsetX * (0.75f + 0.5f*((height - currPoint.y)/height)), 0);
+                currPoint.offset(offsetX * (0.85f + 0.3f*((height - currPoint.y)/height)), 0);
 
                 if (!pointToKeepFound) {
                     if (currPoint.x < 0 - lineWidth) {
