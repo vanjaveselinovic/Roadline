@@ -55,7 +55,7 @@ public class Roadline extends ApplicationAdapter {
 
         treeSprites = new LinkedList<Sprite>();
         Sprite tempSprite;
-        for (i = 0; i < 5; i++) {
+        for (i = 0; i < textureAtlas.getRegions().size; i++) {
         	tempSprite = textureAtlas.createSprite("tree"+i);
         	tempSprite.setSize(tempSprite.getWidth()/350f * (0.75f * (density*160f)), tempSprite.getHeight()/500f * (1.07f * (density*160f)));
         	treeSprites.add(tempSprite);
