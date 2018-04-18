@@ -169,7 +169,7 @@ public class Controller {
             addX = x-width/2 + random.nextFloat()*width/2;
             addY = (float) (random.nextFloat()*1.1*height);
 
-            if (!isPointOnRoad(addX, addY)) {
+            if (!isPointOnOutline(addX, addY)) {
                 positionToInsert = binarySearchTreePointListByY(treePoints, addY);
                 treePoints.add(positionToInsert, new TreePointF(addX, addY, random.nextInt(5)));
             }
@@ -182,23 +182,31 @@ public class Controller {
     private int j;
 
     private boolean isPointOnRoad(float x, float y) {
+        return isPointOnLineArray(x, y, roadWidth);
+    }
+
+    private boolean isPointOnOutline(float x, float y) {
+        return isPointOnLineArray(x, y, outlineWidth);
+    }
+
+    private boolean isPointOnLineArray(float x, float y, float width) {
         for (j = 1; j < roadPoints.size(); j++) {
             prevPoint = roadPoints.get(j - 1);
             currPoint = roadPoints.get(j);
 
-            if (x >= prevPoint.x - roadWidth && x <= currPoint.x + roadWidth) {
+            if (x >= prevPoint.x - width && x <= currPoint.x + width) {
                 if (currPoint.y - prevPoint.y == 0) {
                     p1x = prevPoint.x;
-                    p1y = prevPoint.y - roadWidth / 2;
+                    p1y = prevPoint.y - width / 2;
                     p2x = currPoint.x;
-                    p2y = currPoint.y - roadWidth / 2;
+                    p2y = currPoint.y - width / 2;
                     p3x = currPoint.x;
-                    p3y = currPoint.y + roadWidth / 2;
+                    p3y = currPoint.y + width / 2;
                     p4x = prevPoint.x;
-                    p4y = prevPoint.y + roadWidth / 2;
+                    p4y = prevPoint.y + width / 2;
                 } else {
                     m = -1 * ((currPoint.x - prevPoint.x) / (currPoint.y - prevPoint.y));
-                    k = (float) (roadWidth / (2 * Math.sqrt(1 + Math.pow(m, 2))));
+                    k = (float) (width / (2 * Math.sqrt(1 + Math.pow(m, 2))));
                     p1x = prevPoint.x + k;
                     p1y = prevPoint.y + k * m;
                     p2x = currPoint.x + k;
