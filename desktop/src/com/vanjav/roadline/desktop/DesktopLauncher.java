@@ -7,8 +7,8 @@ import com.vanjav.roadline.Roadline;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 2000;
-		config.width = 1000;
+		config.height = 1920;
+		config.width = 1080;
 		new LwjglApplication(new Roadline(), config);
 	}
 }

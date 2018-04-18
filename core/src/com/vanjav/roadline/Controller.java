@@ -13,6 +13,7 @@ public class Controller {
     private float score;
 
     private int width, height;
+    private float dpi;
     private float crossTime;
     private float lineWidth, roadWidth, outlineWidth;
 
@@ -23,7 +24,7 @@ public class Controller {
     private LinkedList<PointF> treePointsToRemove;
     private float biggestTreeWidth;
 
-    public Controller (int width, int height) {
+    public Controller (int width, int height, float density) {
         linePoints = new LinkedList<PointF>();
         roadPoints = new LinkedList<PointF>();
         firstLinePointToKeep = 0;
@@ -32,10 +33,14 @@ public class Controller {
 
         this.width = width;
         this.height = height;
-        crossTime = 1; //1 second
-        lineWidth = 20;
-        roadWidth = 200;
-        outlineWidth = (float) (roadWidth * 1.75);
+        this.dpi = density*160;
+
+        float widthInInches = this.width/this.dpi;
+
+        crossTime = (float) (widthInInches / 2.75);       // 2.75 inches/s
+        roadWidth = (float) (0.5 * this.dpi);       // 0.5 inches
+        lineWidth = (float) (roadWidth * 0.1);      // 0.1 of road
+        outlineWidth = (float) (roadWidth * 1.75);  // 1.75 of road
         biggestTreeWidth = 300;
 
         random = new Random();

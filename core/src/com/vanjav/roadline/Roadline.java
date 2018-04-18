@@ -3,15 +3,14 @@ package com.vanjav.roadline;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.LinkedList;
 
@@ -19,6 +18,7 @@ public class Roadline extends ApplicationAdapter {
 	private int width;
 	private int height;
 	private float currX, currY;
+	private float density;
 
 	private boolean paused = false;
 	private boolean gameStarted = false;
@@ -31,17 +31,21 @@ public class Roadline extends ApplicationAdapter {
 	private float roadWidth, outlineWidth, lineWidth;
 	private Color bgColor, outlineColor, roadColor, lineColor;
 
-	TextureAtlas textureAtlas;
-	LinkedList<Sprite> treeSprites;
+	private TextureAtlas textureAtlas;
+	private LinkedList<Sprite> treeSprites;
 
-	SpriteBatch batch;
-	BitmapFont font;
-	ShapeRenderer shapeRenderer;
+	private SpriteBatch batch;
+	private BitmapFont font;
+	private ShapeRenderer shapeRenderer;
+
+	private Viewport viewport;
+	private Camera camera;
 
 	@Override
 	public void create () {
 	    width = Gdx.graphics.getWidth();
 	    height =  Gdx.graphics.getHeight();
+	    density = Gdx.graphics.getDensity();
 
         textureAtlas = new TextureAtlas("trees.atlas");
 
@@ -66,6 +70,7 @@ public class Roadline extends ApplicationAdapter {
 				currY = height - screenY;
 
 				gameStarted = true;
+
 				return true;
 			}
 
@@ -88,15 +93,8 @@ public class Roadline extends ApplicationAdapter {
 		startNewGame();
 	}
 
-	public void gameOver() {
-		if (gameStarted) {
-			gameOver = true;
-			// show restart menu
-		}
-	}
-
 	public void startNewGame() {
-		controller = new Controller(width, height);
+		controller = new Controller(width, height, density);
 
 		roadWidth = controller.getRoadWidth();
 		outlineWidth = controller.getOutlineWidth();
@@ -109,6 +107,13 @@ public class Roadline extends ApplicationAdapter {
 
 		gameStarted = false;
 		gameOver = false;
+	}
+
+	public void gameOver() {
+		if (gameStarted) {
+			gameOver = true;
+			// show restart menu
+		}
 	}
 
 	@Override
