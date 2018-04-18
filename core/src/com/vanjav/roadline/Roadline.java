@@ -29,7 +29,11 @@ public class Roadline extends ApplicationAdapter {
 
 	private Controller controller;
 	private float roadWidth, outlineWidth, lineWidth;
-	private Color bgColor, outlineColor, roadColor, lineColor;
+
+	private Color bgColor = new Color(0.431f, 0.804f, 0.239f, 1);
+	private Color outlineColor = new Color(0.388f, 0.78f, 0.224f, 1);
+	private Color roadColor = new Color(0.584f, 0.608f, 0.443f, 1);
+	private Color lineColor = new Color(1f, 0.792f, 0.271f,1);
 
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
@@ -102,11 +106,6 @@ public class Roadline extends ApplicationAdapter {
 		roadWidth = controller.getRoadWidth();
 		outlineWidth = controller.getOutlineWidth();
 		lineWidth = controller.getLineWidth();
-
-		bgColor = new Color(0.459F, 0.714F, 0.282F, 1);
-		outlineColor = new Color(0.431F, 0.686F, 0.255F, 1);
-		roadColor = new Color(0.565F, 0.565F, 0.565F, 1);
-		lineColor = new Color(0.929f, 0.765f, 0.271f,1);
 
 		gameStarted = false;
 		gameOver = false;
@@ -183,10 +182,10 @@ public class Roadline extends ApplicationAdapter {
 			currPoint = controller.getTreePoints().get(i);
 			currTree = treeSprites.get(((TreePointF) currPoint).size);
 
-			if (currPoint.x < width + currTree.getWidth()) {
-				currTree.setPosition(currPoint.x - currTree.getWidth() / 2, currPoint.y);
+			//if (currPoint.x < width + currTree.getWidth()) {
+				currTree.setPosition(currPoint.x - currTree.getWidth()/2, currPoint.y - currTree.getHeight()/2);
 				currTree.draw(batch);
-			}
+			//}
 		}
 
 		score = ""+Math.round(controller.getScore()*10.0)/10.0;

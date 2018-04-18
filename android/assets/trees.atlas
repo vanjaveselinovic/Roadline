@@ -1,41 +1,41 @@
 
 trees.png
-size: 1024,512
+size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 tree0
   rotate: false
   xy: 354, 2
-  size: 100, 143
-  orig: 100, 143
+  size: 100, 286
+  orig: 100, 286
   offset: 0, 0
   index: -1
 tree1
   rotate: false
-  xy: 808, 290
-  size: 150, 214
-  orig: 150, 214
+  xy: 808, 576
+  size: 150, 428
+  orig: 150, 428
   offset: 0, 0
   index: -1
 tree2
   rotate: false
-  xy: 606, 218
-  size: 200, 286
-  orig: 200, 286
+  xy: 606, 432
+  size: 200, 572
+  orig: 200, 572
   offset: 0, 0
   index: -1
 tree3
   rotate: false
-  xy: 354, 147
-  size: 250, 357
-  orig: 250, 357
+  xy: 354, 290
+  size: 250, 714
+  orig: 250, 714
   offset: 0, 0
   index: -1
 tree4
   rotate: false
   xy: 2, 4
-  size: 350, 500
-  orig: 350, 500
+  size: 350, 1000
+  orig: 350, 1000
   offset: 0, 0
   index: -1
