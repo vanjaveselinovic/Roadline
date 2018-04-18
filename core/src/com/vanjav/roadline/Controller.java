@@ -33,14 +33,14 @@ public class Controller {
 
         this.width = width;
         this.height = height;
-        this.dpi = density*160;
+        this.dpi = density*160f;
 
         float widthInInches = this.width/this.dpi;
 
-        crossTime = (float) (widthInInches / 2.75);       // 2.75 inches/s
-        roadWidth = (float) (0.5 * this.dpi);       // 0.5 inches
-        lineWidth = (float) (roadWidth * 0.1);      // 0.1 of road
-        outlineWidth = (float) (roadWidth * 1.75);  // 1.75 of road
+        crossTime = widthInInches / 2.75f;       // 2.75 inches/s
+        roadWidth = 0.5f * this.dpi;       // 0.5 inches
+        lineWidth = roadWidth * 0.1f;      // 0.1 of road
+        outlineWidth = roadWidth * 1.75f;  // 1.75 of road
         biggestTreeWidth = 300;
 
         random = new Random();
