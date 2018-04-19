@@ -5,11 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.LinkedList;
 
@@ -38,7 +36,7 @@ public class Roadline extends ApplicationAdapter {
 	private LinkedList<Sprite> treeSprites;
 
 	private SpriteBatch batch;
-	private BitmapFont font;
+	private BitmapFont bigFont;
 	private ShapeRenderer shapeRenderer;
 
 	@Override
@@ -58,7 +56,8 @@ public class Roadline extends ApplicationAdapter {
 		}
 
 		batch = new SpriteBatch();
-		font = new BitmapFont();
+		bigFont = new BitmapFont(Gdx.files.internal("postazbold.fnt"));
+		bigFont.getData().setScale((height/8) / bigFont.getData().capHeight);
 		shapeRenderer = new ShapeRenderer();
 
 		Gdx.input.setInputProcessor(new InputAdapter(){
@@ -87,9 +86,12 @@ public class Roadline extends ApplicationAdapter {
 
 			@Override
 			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-				gameOver();
+			    if (!gameOver) {
+			        gameOver();
+			        return true;
+                }
 
-				return true;
+				return false;
 			}
 		});
 
@@ -133,6 +135,7 @@ public class Roadline extends ApplicationAdapter {
 
 	private String score;
 	private Sprite currTree;
+	private GlyphLayout glyphLayout;
 
 	private void draw() {
 		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
@@ -185,9 +188,9 @@ public class Roadline extends ApplicationAdapter {
 		}
 
 		score = ""+Math.round(controller.getScore()*10.0)/10.0;
+		if (score.charAt(0) == '0') score = score.substring(1);
 
-		//canvas.drawText(score, width/2 + 2, 200 + 2, paintStroke);
-		//canvas.drawText(score, width/2, 200, paintText);
+		bigFont.draw(batch, ""+score, 0, height - 50, width, Align.center, false);
 
 		/*
 		canvas.drawText("line points: "+controller.getLinePoints().size(), 50, 50, paintDebug);

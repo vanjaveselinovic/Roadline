@@ -125,10 +125,10 @@ public class Controller {
             genX = random.nextFloat() * (lastPointInRoad.x+500-lastPointInRoad.x) + lastPointInRoad.x;
             genY = plusMinus*random.nextFloat() * (lastPointInRoad.y+250-lastPointInRoad.y)+lastPointInRoad.y;
 
-            if (genY < 100)
-                genY = 100;
-            if (genY > height - 100)
-                genY = height - 100;
+            if (genY < roadWidth)
+                genY = roadWidth;
+            if (genY > height - height/8)
+                genY = height - height/8;
 
             roadPoints.add(new PointF(genX, genY));
             lastPointInRoad = roadPoints.getLast();
