@@ -110,6 +110,7 @@ public class Roadline extends ApplicationAdapter {
 	public void gameOver() {
 		if (gameStarted) {
 			gameOver = true;
+			Gdx.input.vibrate(250);
 			// show restart menu
 		}
 	}
