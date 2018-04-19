@@ -27,10 +27,11 @@ public class Roadline extends ApplicationAdapter {
 	private Controller controller;
 	private float roadWidth, outlineWidth, lineWidth;
 
-	private Color bgColor = new Color(0.431f, 0.804f, 0.239f, 1);
+	private Color bgColor = new Color(0.42f, 0.796f, 0.235f, 1);
 	private Color outlineColor = new Color(0.388f, 0.78f, 0.224f, 1);
 	private Color roadColor = new Color(0.584f, 0.608f, 0.443f, 1);
 	private Color lineColor = new Color(1f, 0.792f, 0.271f,1);
+	private Color ledgeColor = new Color(0.463f, 0.541f, 0.424f, 1);
 
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
@@ -56,7 +57,7 @@ public class Roadline extends ApplicationAdapter {
 		}
 
 		batch = new SpriteBatch();
-		bigFont = new BitmapFont(Gdx.files.internal("postazbold.fnt"));
+		bigFont = new BitmapFont(Gdx.files.internal("bebasneue.fnt"));
 		bigFont.getData().setScale((height/8) / bigFont.getData().capHeight);
 		shapeRenderer = new ShapeRenderer();
 
