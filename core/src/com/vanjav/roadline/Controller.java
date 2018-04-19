@@ -83,8 +83,8 @@ public class Controller {
 
     public float getOutlineWidth() { return outlineWidth; }
 
-    private void updateScore(float x) {
-        score += x/1000.0;
+    private void updateScore(float numPixels) {
+        score += numPixels/dpi;
     }
 
     private void initRoad() {

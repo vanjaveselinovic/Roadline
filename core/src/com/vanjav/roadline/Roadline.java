@@ -187,16 +187,9 @@ public class Roadline extends ApplicationAdapter {
 			}
 		}
 
-		score = ""+Math.round(controller.getScore()*10.0)/10.0;
-		if (score.charAt(0) == '0') score = score.substring(1);
+		score = ""+Math.round(controller.getScore());
 
 		bigFont.draw(batch, ""+score, 0, height - 50, width, Align.center, false);
-
-		/*
-		canvas.drawText("line points: "+controller.getLinePoints().size(), 50, 50, paintDebug);
-		canvas.drawText("road points: "+controller.getRoadPoints().size(), 50, 100, paintDebug);
-		canvas.drawText("tree points: "+controller.getTreePoints().size(), 50, 200, paintDebug);
-		*/
 
 		batch.end();
 	}
