@@ -3,14 +3,13 @@ package com.vanjav.roadline;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.LinkedList;
 
@@ -41,9 +40,6 @@ public class Roadline extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private BitmapFont font;
 	private ShapeRenderer shapeRenderer;
-
-	private Viewport viewport;
-	private Camera camera;
 
 	@Override
 	public void create () {
@@ -151,7 +147,6 @@ public class Roadline extends ApplicationAdapter {
 				shapeRenderer.rectLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y, outlineWidth);
 				shapeRenderer.circle(prevPoint.x, prevPoint.y, outlineWidth/2);
 			}
-
 		}
 
 		shapeRenderer.setColor(roadColor.r, roadColor.g, roadColor.b, 1);
@@ -182,10 +177,10 @@ public class Roadline extends ApplicationAdapter {
 			currPoint = controller.getTreePoints().get(i);
 			currTree = treeSprites.get(((TreePointF) currPoint).size);
 
-			//if (currPoint.x < width + currTree.getWidth()) {
+			if (currPoint.x < width + currTree.getWidth()) {
 				currTree.setPosition(currPoint.x - currTree.getWidth()/2, currPoint.y - currTree.getHeight()/2);
 				currTree.draw(batch);
-			//}
+			}
 		}
 
 		score = ""+Math.round(controller.getScore()*10.0)/10.0;
