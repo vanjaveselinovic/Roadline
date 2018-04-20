@@ -36,9 +36,13 @@ public class Roadline extends ApplicationAdapter {
 
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
+	private Texture bestTexture;
+	private Sprite bestSprite;
+
+	private float textScale;
 
 	private SpriteBatch batch;
-	private BitmapFont bigFont;
+	private BitmapFont bigFont, smallFont;
 	private ShapeRenderer shapeRenderer;
 
 	private Preferences preferences;
@@ -64,8 +68,22 @@ public class Roadline extends ApplicationAdapter {
 		}
 
 		batch = new SpriteBatch();
+
 		bigFont = new BitmapFont(Gdx.files.internal("bebasneue.fnt"));
-		bigFont.getData().setScale((height/8) / bigFont.getData().capHeight);
+
+		textScale = (height/8) / bigFont.getData().capHeight;
+
+		bigFont.getData().setScale(textScale);
+
+		smallFont = new BitmapFont(Gdx.files.internal("bebasneue.fnt"));
+		smallFont.getData().setScale(textScale/2);
+
+		bestTexture = new Texture(Gdx.files.internal("best.png"));
+		bestSprite = new Sprite(bestTexture);
+		bestSprite.setScale(textScale);
+		bestSprite.setOrigin(0, 0);
+		bestSprite.setPosition(0, height - height/8 - height/12 - height/16);
+
 		shapeRenderer = new ShapeRenderer();
 
 		Gdx.input.setInputProcessor(new InputAdapter(){
@@ -206,10 +224,13 @@ public class Roadline extends ApplicationAdapter {
 
 		score = Math.round(controller.getScore());
 
-		bigFont.draw(batch, ""+score, 0, height - 50, width, Align.center, false);
+		if (gameStarted) {
+			bigFont.draw(batch, ""+score, 0, height - height/24, width, Align.center, false);
+		}
 
 		if (gameOver) {
-			bigFont.draw(batch, ""+highScore, 0, height - 50 - bigFont.getLineHeight(), width, Align.center, false);
+			bestSprite.draw(batch);
+			smallFont.draw(batch, ""+highScore, 0, height - height/8 - height/12, width, Align.center, false);
 		}
 
 		batch.end();
