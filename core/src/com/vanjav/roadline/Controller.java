@@ -22,9 +22,10 @@ public class Controller {
     /* zone 1 */
     private LinkedList<TreePointF> treePoints;
     private LinkedList<PointF> treePointsToRemove;
-    private float biggestTreeWidth;
+    private float biggestTreeWidth, instructionsWidth;
+    private LinkedList<PointF> noTreeZone;
 
-    public Controller (int width, int height, float density, int biggestTreeWidth) {
+    public Controller (int width, int height, float density, int biggestTreeWidth, float instructionsWidth) {
         linePoints = new LinkedList<PointF>();
         roadPoints = new LinkedList<PointF>();
         firstLinePointToKeep = 0;
@@ -41,7 +42,13 @@ public class Controller {
         roadWidth = 0.5f * this.dpi;       // 0.5 inches
         lineWidth = roadWidth * 0.1f;      // 0.1 of road
         outlineWidth = roadWidth * 1.75f;  // 1.75 of road
+
         this.biggestTreeWidth = biggestTreeWidth;
+        this.instructionsWidth = instructionsWidth;
+
+        noTreeZone = new LinkedList<PointF>();
+        noTreeZone.add(new PointF(width/2 - instructionsWidth/2 - biggestTreeWidth/2, height/2 - roadWidth));
+        noTreeZone.add(new PointF(width/2 + instructionsWidth/2 + biggestTreeWidth/2, height/2 - roadWidth));
 
         random = new Random();
 
@@ -51,6 +58,14 @@ public class Controller {
 
         initRoad();
         genRoad();
+
+        for (int treeIndex = 0; treeIndex < treePoints.size(); treeIndex++) {
+            if (isPointOnLineArray(treePoints.get(treeIndex).x, treePoints.get(treeIndex).y, noTreeZone, outlineWidth)) {
+                treePointsToRemove.add(treePoints.get(treeIndex));
+            }
+        }
+        treePoints.removeAll(treePointsToRemove);
+        treePointsToRemove.clear();
     }
 
     public LinkedList<PointF> getLinePoints() {
@@ -182,17 +197,17 @@ public class Controller {
     private int j;
 
     private boolean isPointOnRoad(float x, float y) {
-        return isPointOnLineArray(x, y, roadWidth);
+        return isPointOnLineArray(x, y, roadPoints, roadWidth);
     }
 
     private boolean isPointOnOutline(float x, float y) {
-        return isPointOnLineArray(x, y, outlineWidth);
+        return isPointOnLineArray(x, y, roadPoints, outlineWidth);
     }
 
-    private boolean isPointOnLineArray(float x, float y, float width) {
-        for (j = 1; j < roadPoints.size(); j++) {
-            prevPoint = roadPoints.get(j - 1);
-            currPoint = roadPoints.get(j);
+    private boolean isPointOnLineArray(float x, float y, LinkedList<PointF> points, float width) {
+        for (j = 1; j < points.size(); j++) {
+            prevPoint = points.get(j - 1);
+            currPoint = points.get(j);
 
             if (x >= prevPoint.x - width && x <= currPoint.x + width) {
                 if (currPoint.y - prevPoint.y == 0) {

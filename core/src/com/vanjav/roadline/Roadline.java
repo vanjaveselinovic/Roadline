@@ -36,14 +36,16 @@ public class Roadline extends ApplicationAdapter {
 
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
-	private Texture bestTexture;
-	private Sprite bestSprite;
-
-	private float textScale;
 
 	private SpriteBatch batch;
-	private BitmapFont bigFont, smallFont;
 	private ShapeRenderer shapeRenderer;
+
+	private BitmapFont font500, font250, font125, font125flat;
+	private float textScale, textHeight;
+	private float titlePositionY, instructionsPositionY, scorePositionY, bestPositionY;
+	private float instructionsWidth;
+
+	private String instructionsText = "TAP     HOLD";
 
 	private Preferences preferences;
 	private int score;
@@ -69,20 +71,28 @@ public class Roadline extends ApplicationAdapter {
 
 		batch = new SpriteBatch();
 
-		bigFont = new BitmapFont(Gdx.files.internal("bebasneue.fnt"));
+		font500 = new BitmapFont(Gdx.files.internal("font500.fnt"));
 
-		textScale = (height/8) / bigFont.getData().capHeight;
+		textHeight = height/8;
+		textScale = textHeight / font500.getData().capHeight;
 
-		bigFont.getData().setScale(textScale);
+		font500.getData().setScale(textScale);
 
-		smallFont = new BitmapFont(Gdx.files.internal("bebasneue.fnt"));
-		smallFont.getData().setScale(textScale/2);
+		font250 = new BitmapFont(Gdx.files.internal("font250.fnt"));
+		font250.getData().setScale(textScale);
 
-		bestTexture = new Texture(Gdx.files.internal("best.png"));
-		bestSprite = new Sprite(bestTexture);
-		bestSprite.setScale(textScale);
-		bestSprite.setOrigin(0, 0);
-		bestSprite.setPosition(0, height - height/8 - height/12 - height/16);
+		font125 = new BitmapFont(Gdx.files.internal("font125.fnt"));
+		font125.getData().setScale(textScale);
+
+		font125 = new BitmapFont(Gdx.files.internal("font125flat.fnt"));
+		font125.getData().setScale(textScale);
+
+		titlePositionY = height - textHeight/2;
+		instructionsPositionY = height/2 + textHeight/8;
+		scorePositionY = height - textHeight/2;
+		bestPositionY = height - textHeight*2;
+
+		instructionsWidth = new GlyphLayout(font125, instructionsText).width;
 
 		shapeRenderer = new ShapeRenderer();
 
@@ -129,7 +139,7 @@ public class Roadline extends ApplicationAdapter {
 	}
 
 	public void startNewGame() {
-		controller = new Controller(width, height, density, textureAtlas.findRegion("tree4").getRegionWidth());
+		controller = new Controller(width, height, density, textureAtlas.findRegion("tree4").getRegionWidth(), instructionsWidth);
 
 		roadWidth = controller.getRoadWidth();
 		outlineWidth = controller.getOutlineWidth();
@@ -212,6 +222,10 @@ public class Roadline extends ApplicationAdapter {
 
 		batch.begin();
 
+		if (!gameStarted) {
+			font125.draw(batch, instructionsText, 0, instructionsPositionY, width, Align.center, false);
+		}
+
 		for (i = 1; i < controller.getTreePoints().size(); i++) {
 			currPoint = controller.getTreePoints().get(i);
 			currTree = treeSprites.get(((TreePointF) currPoint).size);
@@ -222,15 +236,18 @@ public class Roadline extends ApplicationAdapter {
 			}
 		}
 
-		score = Math.round(controller.getScore());
+		score = (int) Math.floor(controller.getScore());
+
+		if (!gameStarted) {
+			font250.draw(batch, "ROADLINE", 0, titlePositionY, width, Align.center, false);
+		}
 
 		if (gameStarted) {
-			bigFont.draw(batch, ""+score, 0, height - height/24, width, Align.center, false);
+			font500.draw(batch, ""+score, 0, scorePositionY, width, Align.center, false);
 		}
 
 		if (gameOver) {
-			bestSprite.draw(batch);
-			smallFont.draw(batch, ""+highScore, 0, height - height/8 - height/12, width, Align.center, false);
+			font250.draw(batch, "BEST "+highScore, 0, bestPositionY, width, Align.center, false);
 		}
 
 		batch.end();
