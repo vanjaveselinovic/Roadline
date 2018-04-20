@@ -37,8 +37,8 @@ public class Roadline extends ApplicationAdapter {
 
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
-	private Texture handTexture;
-	private Sprite handSprite;
+	private Texture handTexture, vibrate1Texture, vibrate0Texture;
+	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite;
 
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
@@ -47,6 +47,8 @@ public class Roadline extends ApplicationAdapter {
 	private float textScale, textHeight;
 	private float titlePositionY, instructionsPositionY, scorePositionY, bestPositionY;
 	private float instructionsWidth;
+
+	private float vibrateX1, vibrateY1, vibrateX2, vibrateY2;
 
 	private String instructionsText = "HOLD     DRAG";
 
@@ -96,6 +98,24 @@ public class Roadline extends ApplicationAdapter {
 		scorePositionY = height - textHeight/2;
 		bestPositionY = height - textHeight*2;
 
+		vibrateX1 = height/50;
+		vibrateY1 = height/50;
+
+		vibrate1Texture = new Texture(Gdx.files.internal("vibrate1.png"));
+		vibrate1Sprite = new Sprite(vibrate1Texture);
+		vibrate1Sprite.setScale(textScale);
+		vibrate1Sprite.setOrigin(0, 0);
+		vibrate1Sprite.setPosition(vibrateX1, vibrateY1);
+
+		vibrate0Texture = new Texture(Gdx.files.internal("vibrate0.png"));
+		vibrate0Sprite = new Sprite(vibrate0Texture);
+		vibrate0Sprite.setScale(textScale);
+		vibrate0Sprite.setOrigin(0, 0);
+		vibrate0Sprite.setPosition(vibrateX1, vibrateY1);
+
+		vibrateX2 = vibrateX1 + vibrate1Sprite.getWidth()*textScale;
+		vibrateY2 = vibrateY1 + vibrate1Sprite.getHeight()*textScale;
+
 		instructionsWidth = new GlyphLayout(font125, instructionsText).width;
 
 		shapeRenderer = new ShapeRenderer();
@@ -103,13 +123,22 @@ public class Roadline extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(new InputAdapter(){
 			@Override
 			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+				currX = screenX;
+				currY = height - screenY;
+
 				if (gameOver) {
 					startNewGame();
 					return true;
 				}
 
-				currX = screenX;
-				currY = height - screenY;
+				if (!gameStarted) {
+					if (currX >= vibrateX1 && currX <= vibrateX2 && currY >= vibrateY1 && currY <= vibrateY2) {
+						vibrate = !vibrate;
+						preferences.putBoolean("vibrate", vibrate);
+						preferences.flush();
+						return true;
+					}
+				}
 
 				gameStarted = true;
 
@@ -255,6 +284,12 @@ public class Roadline extends ApplicationAdapter {
 
 		if (!gameStarted) {
 			font250.draw(batch, "ROADLINE", 0, titlePositionY, width, Align.center, false);
+			if (vibrate) {
+				vibrate1Sprite.draw(batch);
+			}
+			else {
+				vibrate0Sprite.draw(batch);
+			}
 		}
 
 		if (gameStarted) {
