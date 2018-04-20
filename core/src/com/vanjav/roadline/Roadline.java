@@ -36,6 +36,8 @@ public class Roadline extends ApplicationAdapter {
 
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
+	private Texture handTexture;
+	private Sprite handSprite;
 
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
@@ -45,7 +47,7 @@ public class Roadline extends ApplicationAdapter {
 	private float titlePositionY, instructionsPositionY, scorePositionY, bestPositionY;
 	private float instructionsWidth;
 
-	private String instructionsText = "TAP     HOLD";
+	private String instructionsText = "HOLD     DRAG";
 
 	private Preferences preferences;
 	private int score;
@@ -69,6 +71,9 @@ public class Roadline extends ApplicationAdapter {
         	treeSprites.add(tempSprite);
 		}
 
+		handTexture = new Texture(Gdx.files.internal("hand.png"));
+        handSprite = new Sprite(handTexture); //scale set after controller
+
 		batch = new SpriteBatch();
 
 		font500 = new BitmapFont(Gdx.files.internal("font500.fnt"));
@@ -84,11 +89,9 @@ public class Roadline extends ApplicationAdapter {
 		font125 = new BitmapFont(Gdx.files.internal("font125.fnt"));
 		font125.getData().setScale(textScale);
 
-		font125 = new BitmapFont(Gdx.files.internal("font125flat.fnt"));
-		font125.getData().setScale(textScale);
+		font125flat = new BitmapFont(Gdx.files.internal("font125flat.fnt")); //scale set after controller
 
 		titlePositionY = height - textHeight/2;
-		instructionsPositionY = height/2 + textHeight/8;
 		scorePositionY = height - textHeight/2;
 		bestPositionY = height - textHeight*2;
 
@@ -144,6 +147,12 @@ public class Roadline extends ApplicationAdapter {
 		roadWidth = controller.getRoadWidth();
 		outlineWidth = controller.getOutlineWidth();
 		lineWidth = controller.getLineWidth();
+
+		font125flat.getData().setScale(roadWidth/2 / font125flat.getData().capHeight);
+		handSprite.setSize((84f/73f) * (59f/84f) * (roadWidth/2f), (84f/73f) * (roadWidth/2f));
+		handSprite.setPosition(width/2 - handSprite.getWidth()/2, height/2 - handSprite.getHeight()/2);
+
+		instructionsPositionY = height/2 + roadWidth/2 - roadWidth/4;
 
 		gameStarted = false;
 		gameOver = false;
@@ -223,7 +232,8 @@ public class Roadline extends ApplicationAdapter {
 		batch.begin();
 
 		if (!gameStarted) {
-			font125.draw(batch, instructionsText, 0, instructionsPositionY, width, Align.center, false);
+			font125flat.draw(batch, instructionsText, 0, instructionsPositionY, width, Align.center, false);
+			handSprite.draw(batch);
 		}
 
 		for (i = 1; i < controller.getTreePoints().size(); i++) {
