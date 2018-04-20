@@ -21,6 +21,7 @@ public class Roadline extends ApplicationAdapter {
 	private boolean paused = false;
 	private boolean gameStarted = false;
 	private boolean gameOver = false;
+	private boolean firstSetup = true;
 
 	private PointF prevPoint, currPoint;
 	private int i;
@@ -144,15 +145,19 @@ public class Roadline extends ApplicationAdapter {
 	public void startNewGame() {
 		controller = new Controller(width, height, density, textureAtlas.findRegion("tree4").getRegionWidth(), instructionsWidth);
 
-		roadWidth = controller.getRoadWidth();
-		outlineWidth = controller.getOutlineWidth();
-		lineWidth = controller.getLineWidth();
+		if (firstSetup) {
+			roadWidth = controller.getRoadWidth();
+			outlineWidth = controller.getOutlineWidth();
+			lineWidth = controller.getLineWidth();
 
-		font125flat.getData().setScale(roadWidth/2 / font125flat.getData().capHeight);
-		handSprite.setSize((84f/73f) * (59f/84f) * (roadWidth/2f), (84f/73f) * (roadWidth/2f));
-		handSprite.setPosition(width/2 - handSprite.getWidth()/2, height/2 - handSprite.getHeight()/2);
+			font125flat.getData().setScale(roadWidth / 2 / font125flat.getData().capHeight);
+			handSprite.setSize((84f / 73f) * (59f / 84f) * (roadWidth / 2f), (84f / 73f) * (roadWidth / 2f));
+			handSprite.setPosition(width / 2 - handSprite.getWidth() / 2, height / 2 - handSprite.getHeight() / 2);
 
-		instructionsPositionY = height/2 + roadWidth/2 - roadWidth/4;
+			instructionsPositionY = height / 2 + roadWidth / 2 - roadWidth / 4;
+
+			firstSetup = false;
+		}
 
 		gameStarted = false;
 		gameOver = false;
