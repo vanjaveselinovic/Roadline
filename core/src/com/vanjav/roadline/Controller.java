@@ -25,7 +25,16 @@ public class Controller {
     private float biggestTreeWidth, instructionsWidth;
     private LinkedList<PointF> noTreeZone;
 
-    public Controller (int width, int height, float density, int biggestTreeWidth, float instructionsWidth) {
+    public Controller (
+            int width,
+            int height,
+            float density,
+            int biggestTreeWidth,
+            float roadWidth,
+            float outlineWidth,
+            float lineWidth,
+            float instructionsWidth
+    ) {
         linePoints = new LinkedList<PointF>();
         roadPoints = new LinkedList<PointF>();
         firstLinePointToKeep = 0;
@@ -39,9 +48,10 @@ public class Controller {
         float widthInInches = this.width/this.dpi;
 
         crossTime = widthInInches / 2.75f;       // 2.75 inches/s
-        roadWidth = 0.5f * this.dpi;       // 0.5 inches
-        lineWidth = roadWidth * 0.1f;      // 0.1 of road
-        outlineWidth = roadWidth * 1.75f;  // 1.75 of road
+
+        this.roadWidth = roadWidth;       // 0.5 inches
+        this.outlineWidth = outlineWidth;      // 0.1 of road
+        this.lineWidth = lineWidth;  // 1.75 of road
 
         this.biggestTreeWidth = biggestTreeWidth;
         this.instructionsWidth = instructionsWidth;

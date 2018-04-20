@@ -16,12 +16,11 @@ public class Roadline extends ApplicationAdapter {
 	private int width;
 	private int height;
 	private float currX, currY;
-	private float density;
+	private float density, dpi;
 
 	private boolean paused = false;
 	private boolean gameStarted = false;
 	private boolean gameOver = false;
-	private boolean firstSetup = true;
 
 	private PointF prevPoint, currPoint;
 	private int i;
@@ -58,28 +57,43 @@ public class Roadline extends ApplicationAdapter {
 	private boolean vibrate;
 	private LinePaint linePaint;
 
+	private Texture.TextureFilter filter = Texture.TextureFilter.Linear;
+
 	@Override
 	public void create () {
 	    width = Gdx.graphics.getWidth();
 	    height =  Gdx.graphics.getHeight();
 	    density = Gdx.graphics.getDensity();
 
+		dpi = density*160f;
+
+		roadWidth = 0.5f * this.dpi;       // 0.5 inches
+		lineWidth = roadWidth * 0.1f;      // 0.1 of road
+		outlineWidth = roadWidth * 1.75f;  // 1.75 of road
+
         textureAtlas = new TextureAtlas("trees.atlas");
 
         treeSprites = new LinkedList<Sprite>();
         Sprite tempSprite;
         for (i = 0; i < textureAtlas.getRegions().size; i++) {
+        	textureAtlas.getRegions().get(i).getTexture().setFilter(filter, filter);
         	tempSprite = textureAtlas.createSprite("tree"+i);
         	tempSprite.setSize(tempSprite.getWidth()/350f * (0.75f * (density*160f)), tempSprite.getHeight()/500f * (1.07f * (density*160f)));
         	treeSprites.add(tempSprite);
 		}
 
 		handTexture = new Texture(Gdx.files.internal("hand.png"));
+        handTexture.setFilter(filter, filter);
         handSprite = new Sprite(handTexture); //scale set after controller
+		handSprite.setSize((84f / 73f) * (59f / 84f) * (roadWidth / 2f), (84f / 73f) * (roadWidth / 2f));
+		handSprite.setPosition(width/2f - handSprite.getWidth()/2f, height/2f - handSprite.getHeight()/2f);
+
+		instructionsPositionY = height / 2 + roadWidth / 2 - roadWidth / 4;
 
 		batch = new SpriteBatch();
 
 		font500 = new BitmapFont(Gdx.files.internal("font500.fnt"));
+		font500.getRegion().getTexture().setFilter(filter, filter);
 
 		textHeight = height/8;
 		textScale = textHeight / font500.getData().capHeight;
@@ -87,12 +101,33 @@ public class Roadline extends ApplicationAdapter {
 		font500.getData().setScale(textScale);
 
 		font250 = new BitmapFont(Gdx.files.internal("font250.fnt"));
+		font250.getRegion().getTexture().setFilter(filter, filter);
 		font250.getData().setScale(textScale);
 
 		font125 = new BitmapFont(Gdx.files.internal("font125.fnt"));
+		font125.getRegion().getTexture().setFilter(filter, filter);
 		font125.getData().setScale(textScale);
 
 		font125flat = new BitmapFont(Gdx.files.internal("font125flat.fnt")); //scale set after controller
+		font125flat.getRegion().getTexture().setFilter(filter, filter);
+		font125flat.getData().setScale(roadWidth/2 / font125flat.getData().capHeight);
+		instructionsWidth = new GlyphLayout(font125flat, instructionsText).width;
+
+		if (instructionsWidth > width/2) {
+		    float handSpriteOldWidth = handSprite.getWidth();
+		    float font125flatOldHeight = font125flat.getCapHeight();
+
+			handSprite.setSize(
+					(handSprite.getWidth() / instructionsWidth) * (width / 2f),
+					(handSprite.getWidth() / instructionsWidth) * (84f / 59f) * (width / 2f)
+			);
+			handSprite.setPosition(width/2f - handSprite.getWidth()/2f, height/2f - handSprite.getHeight()/2f);
+
+			font125flat.getData().setScale(font125flat.getScaleX() * handSprite.getWidth()/handSpriteOldWidth);
+			instructionsPositionY -= ((font125flatOldHeight - font125flat.getCapHeight()) / 2);
+
+			instructionsWidth = new GlyphLayout(font125flat, instructionsText).width;
+		}
 
 		titlePositionY = height - textHeight/2;
 		scorePositionY = height - textHeight/2;
@@ -102,12 +137,14 @@ public class Roadline extends ApplicationAdapter {
 		vibrateY1 = height/50;
 
 		vibrate1Texture = new Texture(Gdx.files.internal("vibrate1.png"));
+		vibrate1Texture.setFilter(filter, filter);
 		vibrate1Sprite = new Sprite(vibrate1Texture);
 		vibrate1Sprite.setScale(textScale);
 		vibrate1Sprite.setOrigin(0, 0);
 		vibrate1Sprite.setPosition(vibrateX1, vibrateY1);
 
 		vibrate0Texture = new Texture(Gdx.files.internal("vibrate0.png"));
+		vibrate0Texture.setFilter(filter, filter);
 		vibrate0Sprite = new Sprite(vibrate0Texture);
 		vibrate0Sprite.setScale(textScale);
 		vibrate0Sprite.setOrigin(0, 0);
@@ -115,8 +152,6 @@ public class Roadline extends ApplicationAdapter {
 
 		vibrateX2 = vibrateX1 + vibrate1Sprite.getWidth()*textScale;
 		vibrateY2 = vibrateY1 + vibrate1Sprite.getHeight()*textScale;
-
-		instructionsWidth = new GlyphLayout(font125, instructionsText).width;
 
 		shapeRenderer = new ShapeRenderer();
 
@@ -126,11 +161,6 @@ public class Roadline extends ApplicationAdapter {
 				currX = screenX;
 				currY = height - screenY;
 
-				if (gameOver) {
-					startNewGame();
-					return true;
-				}
-
 				if (!gameStarted || gameOver) {
 					if (currX >= vibrateX1 && currX <= vibrateX2 && currY >= vibrateY1 && currY <= vibrateY2) {
 						vibrate = !vibrate;
@@ -138,6 +168,11 @@ public class Roadline extends ApplicationAdapter {
 						preferences.flush();
 						return true;
 					}
+				}
+				
+				if (gameOver) {
+					startNewGame();
+					return true;
 				}
 
 				gameStarted = true;
@@ -172,21 +207,15 @@ public class Roadline extends ApplicationAdapter {
 	}
 
 	public void startNewGame() {
-		controller = new Controller(width, height, density, textureAtlas.findRegion("tree4").getRegionWidth(), instructionsWidth);
-
-		if (firstSetup) {
-			roadWidth = controller.getRoadWidth();
-			outlineWidth = controller.getOutlineWidth();
-			lineWidth = controller.getLineWidth();
-
-			font125flat.getData().setScale(roadWidth / 2 / font125flat.getData().capHeight);
-			handSprite.setSize((84f / 73f) * (59f / 84f) * (roadWidth / 2f), (84f / 73f) * (roadWidth / 2f));
-			handSprite.setPosition(width / 2 - handSprite.getWidth() / 2, height / 2 - handSprite.getHeight() / 2);
-
-			instructionsPositionY = height / 2 + roadWidth / 2 - roadWidth / 4;
-
-			firstSetup = false;
-		}
+		controller = new Controller(
+				width,
+				height,
+				density,
+				textureAtlas.findRegion("tree4").getRegionWidth(),
+				roadWidth,
+				outlineWidth,
+				lineWidth,
+				instructionsWidth);
 
 		gameStarted = false;
 		gameOver = false;
