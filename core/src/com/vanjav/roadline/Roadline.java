@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -39,6 +40,12 @@ public class Roadline extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private BitmapFont bigFont;
 	private ShapeRenderer shapeRenderer;
+
+	private Preferences preferences;
+	private int score;
+	private int highScore;
+	private boolean vibrate;
+	private LinePaint linePaint;
 
 	@Override
 	public void create () {
@@ -96,6 +103,10 @@ public class Roadline extends ApplicationAdapter {
 			}
 		});
 
+		preferences = Gdx.app.getPreferences("preferences");
+		highScore = preferences.getInteger("highScore", 0);
+		vibrate = preferences.getBoolean("vibrate", true);
+
 		startNewGame();
 	}
 
@@ -114,6 +125,13 @@ public class Roadline extends ApplicationAdapter {
 		if (gameStarted) {
 			gameOver = true;
 			Gdx.input.vibrate(250);
+
+			if (score > highScore) {
+				highScore = score;
+				preferences.putInteger("highScore", highScore);
+				preferences.flush();
+			}
+
 			// show restart menu
 		}
 	}
@@ -134,9 +152,7 @@ public class Roadline extends ApplicationAdapter {
 		}
 	}
 
-	private String score;
 	private Sprite currTree;
-	private GlyphLayout glyphLayout;
 
 	private void draw() {
 		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
@@ -188,9 +204,13 @@ public class Roadline extends ApplicationAdapter {
 			}
 		}
 
-		score = ""+Math.round(controller.getScore());
+		score = Math.round(controller.getScore());
 
 		bigFont.draw(batch, ""+score, 0, height - 50, width, Align.center, false);
+
+		if (gameOver) {
+			bigFont.draw(batch, ""+highScore, 0, height - 50 - bigFont.getLineHeight(), width, Align.center, false);
+		}
 
 		batch.end();
 	}
