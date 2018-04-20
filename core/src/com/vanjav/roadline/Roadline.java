@@ -131,7 +131,7 @@ public class Roadline extends ApplicationAdapter {
 					return true;
 				}
 
-				if (!gameStarted) {
+				if (!gameStarted || gameOver) {
 					if (currX >= vibrateX1 && currX <= vibrateX2 && currY >= vibrateY1 && currY <= vibrateY2) {
 						vibrate = !vibrate;
 						preferences.putBoolean("vibrate", vibrate);
@@ -195,7 +195,9 @@ public class Roadline extends ApplicationAdapter {
 	public void gameOver() {
 		if (gameStarted) {
 			gameOver = true;
-			Gdx.input.vibrate(250);
+			if (vibrate) {
+				Gdx.input.vibrate(250);
+			}
 
 			if (score > highScore) {
 				highScore = score;
@@ -284,6 +286,9 @@ public class Roadline extends ApplicationAdapter {
 
 		if (!gameStarted) {
 			font250.draw(batch, "ROADLINE", 0, titlePositionY, width, Align.center, false);
+		}
+
+		if (!gameStarted || gameOver) {
 			if (vibrate) {
 				vibrate1Sprite.draw(batch);
 			}
