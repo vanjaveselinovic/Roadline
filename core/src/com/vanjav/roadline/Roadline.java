@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -21,7 +20,6 @@ public class Roadline extends ApplicationAdapter {
 	private float currX, currY;
 	private float density, dpi;
 
-	private boolean paused = false;
 	private boolean gameStarted = false;
 	private boolean gameOver = false;
 	private boolean newHighScore = false;
@@ -233,7 +231,13 @@ public class Roadline extends ApplicationAdapter {
 					return true;
 				}
 
-				gameStarted = true;
+				if (!gameStarted) {
+				    if (currY >= height/2f - roadWidth/2f && currY <= height/2f + roadWidth/2f) {
+                        gameStarted = true;
+
+                        return true;
+                    }
+                }
 
 				return true;
 			}
@@ -323,7 +327,6 @@ public class Roadline extends ApplicationAdapter {
 	}
 
 	private Sprite currTree;
-	private Color currCrashColor;
 
 	private void draw() {
 		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
@@ -377,11 +380,10 @@ public class Roadline extends ApplicationAdapter {
 		if (gameOver && currCrashRadius < crashRadius) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
 
-		    currCrashColor = shapeRenderer.getColor();
-		    shapeRenderer.setColor(currCrashColor.r, currCrashColor.g, currCrashColor.b, 1f - currCrashRadius/crashRadius);
+		    shapeRenderer.setColor(1f, 1f, 1f, 1f - currCrashRadius/crashRadius);
 		    shapeRenderer.circle(currPoint.x, currPoint.y, currCrashRadius);
 
-		    currCrashRadius += crashRadius/8;
+		    currCrashRadius += crashRadius/12;
 		}
 
 		shapeRenderer.end();
