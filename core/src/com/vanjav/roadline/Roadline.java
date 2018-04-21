@@ -255,7 +255,7 @@ public class Roadline extends ApplicationAdapter {
 		preferences = Gdx.app.getPreferences("preferences");
 		highScore = preferences.getInteger("highScore", 0);
 		vibrate = preferences.getBoolean("vibrate", true);
-		linePaintKey = preferences.getString("linePaintKey", "rainbow");
+		linePaintKey = preferences.getString("linePaintKey", "yellow");
 		linePaint = linePaintMap.get(linePaintKey);
 		lineColor = linePaint.color;
 		if (linePaint.animated) {
