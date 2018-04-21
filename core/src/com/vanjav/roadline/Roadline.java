@@ -21,6 +21,7 @@ public class Roadline extends ApplicationAdapter {
 	private boolean paused = false;
 	private boolean gameStarted = false;
 	private boolean gameOver = false;
+	private boolean newHighScore = false;
 
 	private PointF prevPoint, currPoint;
 	private int i;
@@ -32,7 +33,6 @@ public class Roadline extends ApplicationAdapter {
 	private Color outlineColor = new Color(0.388f, 0.78f, 0.224f, 1);
 	private Color roadColor = new Color(0.584f, 0.608f, 0.443f, 1);
 	private Color lineColor = new Color(1f, 0.792f, 0.271f,1);
-	private Color ledgeColor = new Color(0.463f, 0.541f, 0.424f, 1);
 
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
@@ -223,6 +223,7 @@ public class Roadline extends ApplicationAdapter {
 
 		gameStarted = false;
 		gameOver = false;
+		newHighScore = false;
 	}
 
 	public void gameOver() {
@@ -233,6 +234,7 @@ public class Roadline extends ApplicationAdapter {
 			}
 
 			if (score > highScore) {
+				newHighScore = true;
 				highScore = score;
 				preferences.putInteger("highScore", highScore);
 				preferences.flush();
@@ -335,7 +337,13 @@ public class Roadline extends ApplicationAdapter {
 		}
 
 		if (gameOver) {
-			font250.draw(batch, "BEST "+highScore, 0, bestPositionY, width, Align.center, false);
+		    if (newHighScore) {
+                font250.draw(batch, "NEW BEST", 0, bestPositionY, width, Align.center, false);
+            }
+            else {
+                font250.draw(batch, "BEST "+highScore, 0, bestPositionY, width, Align.center, false);
+            }
+
 			font125.draw(batch, "TAP TO RESTART", 0, restartPositionY, width, Align.center, false);
 		}
 
