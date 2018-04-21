@@ -78,6 +78,8 @@ public class Roadline extends ApplicationAdapter {
     private Color[] lineColors = new Color[]{};
     private int lineColorsIndex = 0;
 
+    private float crashRadius, currCrashRadius;
+
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
 	private Texture handTexture, vibrate1Texture, vibrate0Texture;
@@ -113,8 +115,11 @@ public class Roadline extends ApplicationAdapter {
 		dpi = density*160f;
 
 		roadWidth = 0.5f * this.dpi;       // 0.5 inches
-		lineWidth = roadWidth * 0.1f;      // 0.1 of road
+		lineWidth = roadWidth * 0.067f;    // 0.067 of road
 		outlineWidth = roadWidth * 1.75f;  // 1.75 of road
+
+        crashRadius = outlineWidth;
+        currCrashRadius = lineWidth;
 
         for (LinePaint linePaint : linePaints) {
             linePaintMap.put(linePaint.name, linePaint);
@@ -262,7 +267,9 @@ public class Roadline extends ApplicationAdapter {
 		    lineColors = linePaint.colors;
         }
 
-		startNewGame();
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        startNewGame();
 	}
 
 	public void startNewGame() {
@@ -280,6 +287,7 @@ public class Roadline extends ApplicationAdapter {
 		gameOver = false;
 		newHighScore = false;
 		lineColorsIndex = 0;
+		currCrashRadius = lineWidth;
 	}
 
 	public void gameOver() {
@@ -295,9 +303,7 @@ public class Roadline extends ApplicationAdapter {
 				preferences.putInteger("highScore", highScore);
 				preferences.flush();
 			}
-
-			// show restart menu
-		}
+        }
 	}
 
 	@Override
@@ -317,6 +323,7 @@ public class Roadline extends ApplicationAdapter {
 	}
 
 	private Sprite currTree;
+	private Color currCrashColor;
 
 	private void draw() {
 		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
@@ -367,6 +374,15 @@ public class Roadline extends ApplicationAdapter {
 				shapeRenderer.circle(prevPoint.x, prevPoint.y, lineWidth / 2);
 			}
 		}
+		if (gameOver && currCrashRadius < crashRadius) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+
+		    currCrashColor = shapeRenderer.getColor();
+		    shapeRenderer.setColor(currCrashColor.r, currCrashColor.g, currCrashColor.b, 1f - currCrashRadius/crashRadius);
+		    shapeRenderer.circle(currPoint.x, currPoint.y, currCrashRadius);
+
+		    currCrashRadius += crashRadius/8;
+		}
 
 		shapeRenderer.end();
 
@@ -416,6 +432,8 @@ public class Roadline extends ApplicationAdapter {
 
 			font125.draw(batch, "TAP TO RESTART", 0, restartPositionY, width, Align.center, false);
 		}
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
 
 		batch.end();
 	}
