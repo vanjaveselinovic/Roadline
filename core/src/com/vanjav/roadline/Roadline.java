@@ -44,7 +44,7 @@ public class Roadline extends ApplicationAdapter {
 
 	private BitmapFont font500, font250, font125, font125flat;
 	private float textScale, textHeight;
-	private float titlePositionY, instructionsPositionY, scorePositionY, bestPositionY;
+	private float titlePositionY, instructionsPositionY, scorePositionY, bestPositionY, restartPositionY;
 	private float instructionsWidth;
 
 	private float vibrateX1, vibrateY1, vibrateX2, vibrateY2;
@@ -132,6 +132,7 @@ public class Roadline extends ApplicationAdapter {
 		titlePositionY = height - textHeight/2;
 		scorePositionY = height - textHeight/2;
 		bestPositionY = height - textHeight*2;
+		restartPositionY = height - bestPositionY;
 
 		vibrateX1 = height/50;
 		vibrateY1 = height/50;
@@ -335,6 +336,7 @@ public class Roadline extends ApplicationAdapter {
 
 		if (gameOver) {
 			font250.draw(batch, "BEST "+highScore, 0, bestPositionY, width, Align.center, false);
+			font125.draw(batch, "TAP TO RESTART", 0, restartPositionY, width, Align.center, false);
 		}
 
 		batch.end();
