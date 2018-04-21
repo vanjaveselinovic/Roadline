@@ -75,6 +75,9 @@ public class Roadline extends ApplicationAdapter {
     };
     private Map<String, LinePaint> linePaintMap = new HashMap<String, LinePaint>();
 
+    private Color[] lineColors = new Color[]{};
+    private int lineColorsIndex = 0;
+
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
 	private Texture handTexture, vibrate1Texture, vibrate0Texture;
@@ -252,9 +255,12 @@ public class Roadline extends ApplicationAdapter {
 		preferences = Gdx.app.getPreferences("preferences");
 		highScore = preferences.getInteger("highScore", 0);
 		vibrate = preferences.getBoolean("vibrate", true);
-		linePaintKey = preferences.getString("linePaintKey", "yellow");
+		linePaintKey = preferences.getString("linePaintKey", "rainbow");
 		linePaint = linePaintMap.get(linePaintKey);
 		lineColor = linePaint.color;
+		if (linePaint.animated) {
+		    lineColors = linePaint.colors;
+        }
 
 		startNewGame();
 	}
@@ -273,6 +279,7 @@ public class Roadline extends ApplicationAdapter {
 		gameStarted = false;
 		gameOver = false;
 		newHighScore = false;
+		lineColorsIndex = 0;
 	}
 
 	public void gameOver() {
@@ -337,7 +344,21 @@ public class Roadline extends ApplicationAdapter {
 			}
 		}
 
-		shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
+		if (linePaint.animated) {
+            shapeRenderer.setColor(
+                    lineColors[lineColorsIndex].r,
+                    lineColors[lineColorsIndex].g,
+                    lineColors[lineColorsIndex].b,
+                    1f);
+            if (gameStarted) {
+                lineColorsIndex++;
+                if (lineColorsIndex >= linePaint.colors.length) {
+                    lineColorsIndex = 0;
+                }
+            }
+        } else {
+            shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
+        }
 		for (i = 1; i < controller.getLinePoints().size(); i++) {
 			prevPoint = controller.getLinePoints().get(i-1);
 			currPoint = controller.getLinePoints().get(i);
