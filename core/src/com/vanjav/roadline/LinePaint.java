@@ -3,36 +3,27 @@ package com.vanjav.roadline;
 import com.badlogic.gdx.graphics.Color;
 
 public class LinePaint {
-    private String name;
-    private Color color;
+    protected String name;
+    protected Color color;
+    protected int pointsToUnlock;
 
-    private boolean multicolor;
-    private float segmentLength;
+    protected boolean animated;
 
-    private boolean animated;
-    private float period;
+    protected Color[] colors;
 
-    private Color[] colors;
-
-    public LinePaint(String name, Color color) {
+    public LinePaint(String name, Color color, int pointsToUnlock) {
         this.name = name;
         this.color = color;
-        multicolor = false;
+        this.pointsToUnlock = pointsToUnlock;
+
         animated = false;
     }
 
-    public LinePaint(String name, Color[] colors, boolean multicolorOrAnimated, float segmentLengthOrPeriod) {
+    public LinePaint(String name, Color[] colors, int pointsToUnlock) {
         this.name = name;
         this.colors = colors;
-        if (multicolorOrAnimated) {
-            multicolor = true;
-            animated = false;
-            segmentLength = segmentLengthOrPeriod;
-        }
-        else {
-            animated = true;
-            multicolor = false;
-            period = segmentLengthOrPeriod;
-        }
+        this.pointsToUnlock = pointsToUnlock;
+
+        animated = true;
     }
 }

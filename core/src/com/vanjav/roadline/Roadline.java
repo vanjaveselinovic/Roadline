@@ -10,7 +10,10 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class Roadline extends ApplicationAdapter {
 	private int width;
@@ -34,6 +37,44 @@ public class Roadline extends ApplicationAdapter {
 	private Color roadColor = new Color(0.584f, 0.608f, 0.443f, 1);
 	private Color lineColor = new Color(1f, 0.792f, 0.271f,1);
 
+    private LinePaint yellow = new LinePaint("yellow", new Color(1f, 0.792f, 0.271f,1f), 0);
+    private LinePaint white = new LinePaint("white", new Color(0.863f, 0.871f, 0.816f, 1f), 50);
+    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 60);
+    private LinePaint blue = new LinePaint("blue", new Color(0.271f, 0.871f, 1f, 1f), 100);
+    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 110);
+    private LinePaint rainbow = new LinePaint(
+            "rainbow",
+            new Color[] {
+                    new Color(0.961f, 0.294f, 0.286f, 1f),
+                    orange.color,
+                    yellow.color,
+                    new Color(0.42f, 0.796f, 0.235f, 1),
+                    blue.color,
+                    new Color(0.863f, 0.51f, 0.969f, 1f),
+                    pink.color
+            },
+            200
+    );
+    private LinePaint pulsar = new LinePaint(
+            "pulsar",
+            new Color[] {
+                    blue.color,
+                    white.color,
+            },
+            210
+    );
+
+    private LinePaint[] linePaints = new LinePaint[] {
+            yellow,
+            white,
+            orange,
+            blue,
+            pink,
+            rainbow,
+            pulsar
+    };
+    private Map<String, LinePaint> linePaintMap = new HashMap<String, LinePaint>();
+
 	private TextureAtlas textureAtlas;
 	private LinkedList<Sprite> treeSprites;
 	private Texture handTexture, vibrate1Texture, vibrate0Texture;
@@ -56,6 +97,7 @@ public class Roadline extends ApplicationAdapter {
 	private int highScore;
 	private boolean vibrate;
 	private LinePaint linePaint;
+	private String linePaintKey;
 
 	private Texture.TextureFilter filter = Texture.TextureFilter.Linear;
 
@@ -70,6 +112,10 @@ public class Roadline extends ApplicationAdapter {
 		roadWidth = 0.5f * this.dpi;       // 0.5 inches
 		lineWidth = roadWidth * 0.1f;      // 0.1 of road
 		outlineWidth = roadWidth * 1.75f;  // 1.75 of road
+
+        for (LinePaint linePaint : linePaints) {
+            linePaintMap.put(linePaint.name, linePaint);
+        }
 
         textureAtlas = new TextureAtlas("trees.atlas");
 
@@ -206,6 +252,9 @@ public class Roadline extends ApplicationAdapter {
 		preferences = Gdx.app.getPreferences("preferences");
 		highScore = preferences.getInteger("highScore", 0);
 		vibrate = preferences.getBoolean("vibrate", true);
+		linePaintKey = preferences.getString("linePaintKey", "yellow");
+		linePaint = linePaintMap.get(linePaintKey);
+		lineColor = linePaint.color;
 
 		startNewGame();
 	}
