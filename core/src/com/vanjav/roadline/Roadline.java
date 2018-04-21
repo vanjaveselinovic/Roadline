@@ -164,12 +164,15 @@ public class Roadline extends ApplicationAdapter {
 				if (!gameStarted || gameOver) {
 					if (currX >= vibrateX1 && currX <= vibrateX2 && currY >= vibrateY1 && currY <= vibrateY2) {
 						vibrate = !vibrate;
+						if (vibrate) {
+							Gdx.input.vibrate(100);
+						}
 						preferences.putBoolean("vibrate", vibrate);
 						preferences.flush();
 						return true;
 					}
 				}
-				
+
 				if (gameOver) {
 					startNewGame();
 					return true;
