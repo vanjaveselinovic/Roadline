@@ -219,7 +219,7 @@ public class Roadline extends ApplicationAdapter {
 
         colorCenterX = colorBaseSprite.getX() + colorBaseSprite.getWidth()*colorBaseSprite.getScaleX()/2;
         colorCenterY = colorBaseSprite.getY() + colorBaseSprite.getHeight()*colorBaseSprite.getScaleY()/2;
-        colorRadius = 100*textScale/2;
+        colorRadius = 128*textScale/2;
 
 		shapeRenderer = new ShapeRenderer();
 
