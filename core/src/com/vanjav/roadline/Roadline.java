@@ -114,6 +114,8 @@ public class Roadline extends ApplicationAdapter {
 
 	private Texture.TextureFilter filter = Texture.TextureFilter.Linear;
 
+	private int inputPaintIndex;
+
 	@Override
 	public void create () {
 	    width = Gdx.graphics.getWidth();
@@ -251,10 +253,10 @@ public class Roadline extends ApplicationAdapter {
         lockX = width - outlineWidth + (outlineWidth - lockWidth)/2;
 
         font75flat = new BitmapFont(Gdx.files.internal("font125flat.fnt")); //scale set after controller
-        font125flat.getRegion().getTexture().setFilter(filter, filter);
-        font125flat.getData().setScale(lockHeight/1.5f / font75flat.getData().capHeight);
+        font75flat.getRegion().getTexture().setFilter(filter, filter);
+        font75flat.getData().setScale(lockHeight/1.5f / font75flat.getData().capHeight);
 
-        lockY = (colorLineHeight - (lockHeight + font75flat.getData().capHeight + lineWidth))/2 + lockHeight + lineWidth/2;
+        lockY = colorLineHeight/2 - (lockHeight - font75flat.getCapHeight())/2;
 
 		shapeRenderer = new ShapeRenderer();
 
@@ -296,6 +298,23 @@ public class Roadline extends ApplicationAdapter {
 				            return true;
                         }
                         else {
+				            for (inputPaintIndex = 0; inputPaintIndex < numColors; inputPaintIndex++) {
+				                if (currY > inputPaintIndex*colorLineHeight
+                                        && currY < inputPaintIndex*colorLineHeight + colorLineHeight) {
+				                    if (highScore >= linePaints[inputPaintIndex].pointsToUnlock) {
+				                        colorSelectionOpen = false;
+
+				                        linePaint = linePaints[inputPaintIndex];
+				                        lineColor = linePaint.color;
+
+				                        return true;
+                                    }
+                                    else {
+				                        return false;
+                                    }
+                                }
+                            }
+
 				            return false;
                         }
                     }
@@ -572,7 +591,7 @@ public class Roadline extends ApplicationAdapter {
 		            lockSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2);
 		            lockSprite.draw(batch);
 
-		            font125flat.draw(
+		            font75flat.draw(
 		                    batch,
                             ""+linePaints[i].pointsToUnlock,
                             colorOutlineX,
