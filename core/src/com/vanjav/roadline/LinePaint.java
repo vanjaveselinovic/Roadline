@@ -19,11 +19,11 @@ public class LinePaint {
         animated = false;
     }
 
-    public LinePaint(String name, Color[] colors, int pointsToUnlock) {
+    public LinePaint(String name, Color[] colors, int framesPerColor, int pointsToUnlock) {
         this.name = name;
         this.color = colors[0];
 
-        this.colors = new Color[30*colors.length];
+        this.colors = new Color[framesPerColor*colors.length];
 
         int iPlus1 = 1;
         float weight = 1;
@@ -32,9 +32,9 @@ public class LinePaint {
             iPlus1 = i+1;
             if (iPlus1 >= colors.length) iPlus1 = 0;
 
-            for (int j = 0; j < 30; j++) {
-                weight = 1f - j/30f;
-                this.colors[i*30 + j] = new Color(
+            for (int j = 0; j < framesPerColor; j++) {
+                weight = 1f - (float) j/framesPerColor;
+                this.colors[i*framesPerColor + j] = new Color(
                         colors[i].r*weight + colors[iPlus1].r*(1-weight),
                         colors[i].g*weight + colors[iPlus1].g*(1-weight),
                         colors[i].b*weight + colors[iPlus1].b*(1-weight),

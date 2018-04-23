@@ -53,6 +53,7 @@ public class Roadline extends ApplicationAdapter {
                     new Color(0.863f, 0.51f, 0.969f, 1f),
                     pink.color
             },
+            10,
             200
     );
     private LinePaint pulsar = new LinePaint(
@@ -61,6 +62,7 @@ public class Roadline extends ApplicationAdapter {
                     new Color(1f, 1f, 1f, 1f),
                     new Color(0f, 0f, 0f, 1f)
             },
+            50,
             300
     );
 
@@ -307,6 +309,9 @@ public class Roadline extends ApplicationAdapter {
 				                        linePaint = linePaints[inputPaintIndex];
 				                        lineColor = linePaint.color;
 
+				                        preferences.putString("linePaintKey", linePaint.name);
+				                        preferences.flush();
+
 				                        return true;
                                     }
                                     else {
@@ -422,6 +427,7 @@ public class Roadline extends ApplicationAdapter {
 	}
 
 	private Sprite currTree;
+	private Color colorLineColor;
 
 	private void draw() {
 		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
@@ -559,10 +565,10 @@ public class Roadline extends ApplicationAdapter {
 		    shapeRenderer.rect(colorRoadX, 0, roadWidth, height);
 
 		    for (i = 0; i < numColors; i++) {
-		        lineColor = linePaints[i].color;
+		        colorLineColor = linePaints[i].color;
 
                 if (i == 5) { //rainbow
-                    lineColor = rainbowColors[rainbowColorsIndex];
+                    colorLineColor = rainbowColors[rainbowColorsIndex];
 
                     rainbowColorsIndex++;
                     if (rainbowColorsIndex >= rainbow.colors.length) {
@@ -570,7 +576,7 @@ public class Roadline extends ApplicationAdapter {
                     }
                 }
                 else if (i == 6) {
-                    lineColor = pulsarColors[pulsarColorsIndex];
+                    colorLineColor = pulsarColors[pulsarColorsIndex];
 
                     pulsarColorsIndex++;
                     if (pulsarColorsIndex >= pulsar.colors.length) {
@@ -578,7 +584,7 @@ public class Roadline extends ApplicationAdapter {
                     }
                 }
 
-		        shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1f);
+		        shapeRenderer.setColor(colorLineColor.r, colorLineColor.g, colorLineColor.b, 1f);
 		        shapeRenderer.rect(colorLineX, i * colorLineHeight, lineWidth, colorLineHeight);
             }
 
