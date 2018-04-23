@@ -78,10 +78,10 @@ public class Roadline extends ApplicationAdapter {
 
     private float crashRadius, currCrashRadius;
 
-	private TextureAtlas textureAtlas;
+	private TextureAtlas treesAtlas, otherAtlas;
 	private LinkedList<Sprite> treeSprites;
-	private Texture handTexture, vibrate1Texture, vibrate0Texture;
-	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite;
+	private float biggestTreeWidth;
+	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite, colorBaseSprite, colorHandSprite;
 
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
@@ -91,7 +91,7 @@ public class Roadline extends ApplicationAdapter {
 	private float titlePositionY, instructionsPositionY, scorePositionY, bestPositionY, restartPositionY;
 	private float instructionsWidth;
 
-	private float vibrateX1, vibrateY1, vibrateX2, vibrateY2;
+	private float vibrateX1, vibrateY1, vibrateX2, vibrateY2, colorCenterX, colorCenterY, colorRadius;
 
 	private String instructionsText = "HOLD     DRAG";
 
@@ -123,20 +123,25 @@ public class Roadline extends ApplicationAdapter {
             linePaintMap.put(linePaint.name, linePaint);
         }
 
-        textureAtlas = new TextureAtlas("trees.atlas");
+        treesAtlas = new TextureAtlas("trees.atlas");
 
         treeSprites = new LinkedList<Sprite>();
         Sprite tempSprite;
-        for (i = 0; i < textureAtlas.getRegions().size; i++) {
-        	textureAtlas.getRegions().get(i).getTexture().setFilter(filter, filter);
-        	tempSprite = textureAtlas.createSprite("tree"+i);
+        for (i = 0; i < treesAtlas.getRegions().size; i++) {
+        	treesAtlas.getRegions().get(i).getTexture().setFilter(filter, filter);
+        	tempSprite = treesAtlas.createSprite("tree"+i);
         	tempSprite.setSize(tempSprite.getWidth()/350f * (0.75f * (density*160f)), tempSprite.getHeight()/500f * (1.07f * (density*160f)));
         	treeSprites.add(tempSprite);
 		}
 
-		handTexture = new Texture(Gdx.files.internal("hand.png"));
-        handTexture.setFilter(filter, filter);
-        handSprite = new Sprite(handTexture); //scale set after controller
+		biggestTreeWidth = treeSprites.get(4).getWidth();
+
+		otherAtlas = new TextureAtlas("other.atlas");
+        for (i = 0; i < otherAtlas.getRegions().size; i++) {
+            otherAtlas.getRegions().get(i).getTexture().setFilter(filter, filter);
+        }
+
+        handSprite = otherAtlas.createSprite("hand");
 		handSprite.setSize((84f / 73f) * (59f / 84f) * (roadWidth / 2f), (84f / 73f) * (roadWidth / 2f));
 		handSprite.setPosition(width/2f - handSprite.getWidth()/2f, height/2f - handSprite.getHeight()/2f);
 
@@ -186,25 +191,35 @@ public class Roadline extends ApplicationAdapter {
 		bestPositionY = height - textHeight*2;
 		restartPositionY = height - bestPositionY;
 
-		vibrateX1 = height/50;
-		vibrateY1 = height/50;
+		vibrateX1 = 0;
+		vibrateY1 = 0;
 
-		vibrate1Texture = new Texture(Gdx.files.internal("vibrate1.png"));
-		vibrate1Texture.setFilter(filter, filter);
-		vibrate1Sprite = new Sprite(vibrate1Texture);
+		vibrate1Sprite = otherAtlas.createSprite("vibrate1");
 		vibrate1Sprite.setScale(textScale);
 		vibrate1Sprite.setOrigin(0, 0);
 		vibrate1Sprite.setPosition(vibrateX1, vibrateY1);
 
-		vibrate0Texture = new Texture(Gdx.files.internal("vibrate0.png"));
-		vibrate0Texture.setFilter(filter, filter);
-		vibrate0Sprite = new Sprite(vibrate0Texture);
+		vibrate0Sprite = otherAtlas.createSprite("vibrate0");
 		vibrate0Sprite.setScale(textScale);
 		vibrate0Sprite.setOrigin(0, 0);
 		vibrate0Sprite.setPosition(vibrateX1, vibrateY1);
 
 		vibrateX2 = vibrateX1 + vibrate1Sprite.getWidth()*textScale;
 		vibrateY2 = vibrateY1 + vibrate1Sprite.getHeight()*textScale;
+
+		colorBaseSprite  = otherAtlas.createSprite("colorbase");
+		colorBaseSprite.setScale(textScale);
+		colorBaseSprite.setOrigin(0, 0);
+		colorBaseSprite.setPosition(width - colorBaseSprite.getWidth()*colorBaseSprite.getScaleX(), 0);
+
+        colorHandSprite  = otherAtlas.createSprite("colorhand");
+        colorHandSprite.setScale(textScale);
+        colorHandSprite.setOrigin(0, 0);
+        colorHandSprite.setPosition(width - colorHandSprite.getWidth()*colorHandSprite.getScaleX(), 0);
+
+        colorCenterX = colorBaseSprite.getX() + colorBaseSprite.getWidth()*colorBaseSprite.getScaleX()/2;
+        colorCenterY = colorBaseSprite.getY() + colorBaseSprite.getHeight()*colorBaseSprite.getScaleY()/2;
+        colorRadius = 100*textScale/2;
 
 		shapeRenderer = new ShapeRenderer();
 
@@ -281,7 +296,7 @@ public class Roadline extends ApplicationAdapter {
 				width,
 				height,
 				density,
-				textureAtlas.findRegion("tree4").getRegionWidth(),
+                (int) biggestTreeWidth,
 				roadWidth,
 				outlineWidth,
 				lineWidth,
@@ -418,6 +433,33 @@ public class Roadline extends ApplicationAdapter {
 			else {
 				vibrate0Sprite.draw(batch);
 			}
+
+			colorBaseSprite.draw(batch);
+
+			batch.end();
+			shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+            if (linePaint.animated) {
+                shapeRenderer.setColor(
+                        lineColors[lineColorsIndex].r,
+                        lineColors[lineColorsIndex].g,
+                        lineColors[lineColorsIndex].b,
+                        1f);
+                if (gameStarted) {
+                    lineColorsIndex++;
+                    if (lineColorsIndex >= linePaint.colors.length) {
+                        lineColorsIndex = 0;
+                    }
+                }
+            } else {
+                shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
+            }
+			shapeRenderer.circle(colorCenterX, colorCenterY, colorRadius);
+
+			shapeRenderer.end();
+			batch.begin();
+
+			colorHandSprite.draw(batch);
 		}
 
 		if (gameStarted) {
@@ -443,6 +485,7 @@ public class Roadline extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		textureAtlas.dispose();
+		treesAtlas.dispose();
+		otherAtlas.dispose();
 	}
 }

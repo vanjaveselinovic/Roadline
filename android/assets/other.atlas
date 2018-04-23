@@ -1,0 +1,41 @@
+
+other.png
+size: 2048,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+colorbase
+  rotate: false
+  xy: 776, 88
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+colorhand
+  rotate: false
+  xy: 518, 88
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+hand
+  rotate: false
+  xy: 2, 2
+  size: 59, 84
+  orig: 59, 84
+  offset: 0, 0
+  index: -1
+vibrate0
+  rotate: false
+  xy: 2, 88
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+vibrate1
+  rotate: false
+  xy: 260, 88
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
