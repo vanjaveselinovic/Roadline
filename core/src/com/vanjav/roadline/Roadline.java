@@ -24,6 +24,7 @@ public class Roadline extends ApplicationAdapter {
 	private boolean gameOver = false;
 	private boolean newHighScore = false;
 	private boolean colorSelectionOpen = false;
+	private boolean useGameOverLinePaint = false;
 
 	private PointF prevPoint, currPoint;
 	private int i;
@@ -35,6 +36,7 @@ public class Roadline extends ApplicationAdapter {
 	private Color outlineColor = new Color(0.388f, 0.78f, 0.224f, 1);
 	private Color roadColor = new Color(0.584f, 0.608f, 0.443f, 1);
 	private Color lineColor = new Color(1f, 0.792f, 0.271f,1);
+	private Color gameOverLineColor = lineColor;
 	private Color shadowColor = new Color(0f, 0.282f, 0.353f, 1f);
 
     private LinePaint yellow = new LinePaint("yellow", new Color(1f, 0.792f, 0.271f,1f), 0);
@@ -80,6 +82,9 @@ public class Roadline extends ApplicationAdapter {
     private Color[] lineColors = new Color[]{};
     private int lineColorsIndex = 0;
 
+    private Color[] gameOverLineColors = new Color[]{};
+    private int gameOverLineColorsIndex = 0;
+
     private Color[] rainbowColors = rainbow.colors;
     private int rainbowColorsIndex = 0;
 
@@ -111,7 +116,7 @@ public class Roadline extends ApplicationAdapter {
 	private int score;
 	private int highScore;
 	private boolean vibrate;
-	private LinePaint linePaint;
+	private LinePaint linePaint, gameOverLinePaint;
 	private String linePaintKey;
 
 	private Texture.TextureFilter filter = Texture.TextureFilter.Linear;
@@ -306,8 +311,23 @@ public class Roadline extends ApplicationAdapter {
 				                    if (highScore >= linePaints[inputPaintIndex].pointsToUnlock) {
 				                        colorSelectionOpen = false;
 
-				                        linePaint = linePaints[inputPaintIndex];
-				                        lineColor = linePaint.color;
+				                        if (!useGameOverLinePaint) {
+                                            gameOverLinePaint = linePaint;
+                                            gameOverLineColor = gameOverLinePaint.color;
+                                            gameOverLineColorsIndex = lineColorsIndex;
+                                            if (gameOverLinePaint.animated) {
+                                                gameOverLineColors = gameOverLinePaint.colors;
+                                            }
+
+                                            useGameOverLinePaint = true;
+                                        }
+
+                                        linePaint = linePaints[inputPaintIndex];
+                                        lineColor = linePaint.color;
+                                        if (linePaint.animated) {
+                                            lineColors = linePaint.colors;
+                                        }
+                                        lineColorsIndex = 0;
 
 				                        preferences.putString("linePaintKey", linePaint.name);
 				                        preferences.flush();
@@ -392,6 +412,7 @@ public class Roadline extends ApplicationAdapter {
 		newHighScore = false;
 		lineColorsIndex = 0;
 		currCrashRadius = lineWidth;
+		useGameOverLinePaint = false;
 	}
 
 	public void gameOver() {
@@ -455,15 +476,30 @@ public class Roadline extends ApplicationAdapter {
 			}
 		}
 
-		if (linePaint.animated) {
-		    lineColor = lineColors[lineColorsIndex];
+        if (linePaint.animated) {
+            lineColor = lineColors[lineColorsIndex];
 
             lineColorsIndex++;
             if (lineColorsIndex >= linePaint.colors.length) {
                 lineColorsIndex = 0;
             }
         }
-        shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
+
+		if (useGameOverLinePaint) {
+            if (gameOverLinePaint.animated) {
+                gameOverLineColor = gameOverLineColors[gameOverLineColorsIndex];
+
+                gameOverLineColorsIndex++;
+                if (gameOverLineColorsIndex >= gameOverLinePaint.colors.length) {
+                    gameOverLineColorsIndex = 0;
+                }
+            }
+            shapeRenderer.setColor(gameOverLineColor.r, gameOverLineColor.g, gameOverLineColor.b, 1);
+        }
+        else {
+            shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
+        }
+
 		for (i = 1; i < controller.getLinePoints().size(); i++) {
 			prevPoint = controller.getLinePoints().get(i-1);
 			currPoint = controller.getLinePoints().get(i);
