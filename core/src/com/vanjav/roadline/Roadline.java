@@ -23,6 +23,7 @@ public class Roadline extends ApplicationAdapter {
 	private boolean gameStarted = false;
 	private boolean gameOver = false;
 	private boolean newHighScore = false;
+	private boolean colorSelectionOpen = false;
 
 	private PointF prevPoint, currPoint;
 	private int i;
@@ -34,12 +35,13 @@ public class Roadline extends ApplicationAdapter {
 	private Color outlineColor = new Color(0.388f, 0.78f, 0.224f, 1);
 	private Color roadColor = new Color(0.584f, 0.608f, 0.443f, 1);
 	private Color lineColor = new Color(1f, 0.792f, 0.271f,1);
+	private Color shadowColor = new Color(0f, 0.282f, 0.353f, 1f);
 
     private LinePaint yellow = new LinePaint("yellow", new Color(1f, 0.792f, 0.271f,1f), 0);
     private LinePaint white = new LinePaint("white", new Color(0.863f, 0.871f, 0.816f, 1f), 50);
-    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 60);
+    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 75);
     private LinePaint blue = new LinePaint("blue", new Color(0.271f, 0.871f, 1f, 1f), 100);
-    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 110);
+    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 125);
     private LinePaint rainbow = new LinePaint(
             "rainbow",
             new Color[] {
@@ -56,10 +58,10 @@ public class Roadline extends ApplicationAdapter {
     private LinePaint pulsar = new LinePaint(
             "pulsar",
             new Color[] {
-                    blue.color,
-                    white.color,
+                    new Color(1f, 1f, 1f, 1f),
+                    new Color(0f, 0f, 0f, 1f)
             },
-            210
+            300
     );
 
     private LinePaint[] linePaints = new LinePaint[] {
@@ -76,22 +78,30 @@ public class Roadline extends ApplicationAdapter {
     private Color[] lineColors = new Color[]{};
     private int lineColorsIndex = 0;
 
+    private Color[] rainbowColors = rainbow.colors;
+    private int rainbowColorsIndex = 0;
+
+    private Color[] pulsarColors = pulsar.colors;
+    private int pulsarColorsIndex = 0;
+
     private float crashRadius, currCrashRadius;
 
 	private TextureAtlas treesAtlas, otherAtlas;
 	private LinkedList<Sprite> treeSprites;
 	private float biggestTreeWidth;
-	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite, colorBaseSprite, colorHandSprite;
+	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite, colorBaseSprite, colorHandSprite, lockSprite;
 
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
 
-	private BitmapFont font500, font250, font125, font125flat;
+	private BitmapFont font500, font250, font125, font125flat, font75flat;
 	private float textScale, textHeight;
 	private float titlePositionY, instructionsPositionY, scorePositionY, bestPositionY, restartPositionY;
 	private float instructionsWidth;
 
-	private float vibrateX1, vibrateY1, vibrateX2, vibrateY2, colorCenterX, colorCenterY, colorRadius;
+	private float vibrateX1, vibrateY1, vibrateX2, vibrateY2;
+    private float colorCenterX, colorCenterY, colorRadius, colorX1, colorY1, colorX2, colorY2;
+    private float colorOutlineX, colorRoadX, colorLineX, numColors, colorLineHeight, lockX, lockY, lockWidth, lockHeight;
 
 	private String instructionsText = "HOLD     DRAG";
 
@@ -221,6 +231,31 @@ public class Roadline extends ApplicationAdapter {
         colorCenterY = colorBaseSprite.getY() + colorBaseSprite.getHeight()*colorBaseSprite.getScaleY()/2;
         colorRadius = 128*textScale/2;
 
+        colorX1 = colorBaseSprite.getX();
+        colorY1 = colorBaseSprite.getY();
+        colorX2 = colorX1 + colorBaseSprite.getWidth()*textScale;
+        colorY2 = colorY2 + colorBaseSprite.getHeight()*textScale;
+
+        colorOutlineX = width - outlineWidth;
+        colorRoadX = width - outlineWidth + (outlineWidth - roadWidth)/2;
+        colorLineX = width - outlineWidth + (outlineWidth - lineWidth)/2;
+        numColors = linePaints.length;
+        colorLineHeight = height/linePaints.length;
+
+        lockSprite = otherAtlas.createSprite("lock");
+        lockSprite.setScale(textScale);
+        lockSprite.setOrigin(0, 0);
+
+        lockWidth = lockSprite.getWidth()*textScale;
+        lockHeight = lockSprite.getHeight()*textScale;
+        lockX = width - outlineWidth + (outlineWidth - lockWidth)/2;
+
+        font75flat = new BitmapFont(Gdx.files.internal("font125flat.fnt")); //scale set after controller
+        font125flat.getRegion().getTexture().setFilter(filter, filter);
+        font125flat.getData().setScale(lockHeight/1.5f / font75flat.getData().capHeight);
+
+        lockY = (colorLineHeight - (lockHeight + font75flat.getData().capHeight + lineWidth))/2 + lockHeight + lineWidth/2;
+
 		shapeRenderer = new ShapeRenderer();
 
 		Gdx.input.setInputProcessor(new InputAdapter(){
@@ -230,15 +265,40 @@ public class Roadline extends ApplicationAdapter {
 				currY = height - screenY;
 
 				if (!gameStarted || gameOver) {
-					if (currX >= vibrateX1 && currX <= vibrateX2 && currY >= vibrateY1 && currY <= vibrateY2) {
-						vibrate = !vibrate;
-						if (vibrate) {
-							Gdx.input.vibrate(100);
-						}
-						preferences.putBoolean("vibrate", vibrate);
-						preferences.flush();
-						return true;
-					}
+				    if (!colorSelectionOpen) {
+                        if (currX >= vibrateX1 && currX <= vibrateX2 && currY >= vibrateY1 && currY <= vibrateY2) {
+                            vibrate = !vibrate;
+                            if (vibrate) {
+                                Gdx.input.vibrate(100);
+                            }
+
+                            preferences.putBoolean("vibrate", vibrate);
+                            preferences.flush();
+
+                            return true;
+                        }
+
+                        if (currX >= colorX1 && currX <= colorX2 && currY >= colorY1 && currY <= colorY2) {
+                            colorSelectionOpen = true;
+
+                            rainbowColorsIndex = 0;
+                            pulsarColorsIndex = 0;
+
+                            return true;
+                        }
+                    }
+                    else {
+				        if (currX < width - outlineWidth) {
+				            colorSelectionOpen = false;
+
+				            lineColor = linePaint.color;
+
+				            return true;
+                        }
+                        else {
+				            return false;
+                        }
+                    }
 				}
 
 				if (gameOver) {
@@ -431,17 +491,19 @@ public class Roadline extends ApplicationAdapter {
 
 			colorBaseSprite.draw(batch);
 
-			batch.end();
-			shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            if (!colorSelectionOpen) {
 
+                batch.end();
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-			shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
-			shapeRenderer.circle(colorCenterX, colorCenterY, colorRadius);
+                shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
+                shapeRenderer.circle(colorCenterX, colorCenterY, colorRadius);
 
-			shapeRenderer.end();
-			batch.begin();
+                shapeRenderer.end();
+                batch.begin();
 
-			colorHandSprite.draw(batch);
+                colorHandSprite.draw(batch);
+            }
 		}
 
 		if (gameStarted) {
@@ -462,6 +524,70 @@ public class Roadline extends ApplicationAdapter {
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
 		batch.end();
+
+		if (colorSelectionOpen) {
+		    Gdx.gl.glEnable(GL20.GL_BLEND);
+
+		    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+		    shapeRenderer.setColor(shadowColor.r, shadowColor.g, shadowColor.b, 0.5f);
+		    shapeRenderer.rect(0, 0, width, height);
+
+		    shapeRenderer.setColor(outlineColor.r, outlineColor.g, outlineColor.b, 1f);
+		    shapeRenderer.rect(colorOutlineX, 0, outlineWidth, height);
+
+		    shapeRenderer.setColor(roadColor.r, roadColor.g, roadColor.b, 1f);
+		    shapeRenderer.rect(colorRoadX, 0, roadWidth, height);
+
+		    for (i = 0; i < numColors; i++) {
+		        lineColor = linePaints[i].color;
+
+                if (i == 5) { //rainbow
+                    lineColor = rainbowColors[rainbowColorsIndex];
+
+                    rainbowColorsIndex++;
+                    if (rainbowColorsIndex >= rainbow.colors.length) {
+                        rainbowColorsIndex = 0;
+                    }
+                }
+                else if (i == 6) {
+                    lineColor = pulsarColors[pulsarColorsIndex];
+
+                    pulsarColorsIndex++;
+                    if (pulsarColorsIndex >= pulsar.colors.length) {
+                        pulsarColorsIndex = 0;
+                    }
+                }
+
+		        shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1f);
+		        shapeRenderer.rect(colorLineX, i * colorLineHeight, lineWidth, colorLineHeight);
+            }
+
+		    shapeRenderer.end();
+
+		    batch.begin();
+
+		    for (i = 0; i < numColors; i++) {
+		        if (highScore < linePaints[i].pointsToUnlock) {
+		            lockSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2);
+		            lockSprite.draw(batch);
+
+		            font125flat.draw(
+		                    batch,
+                            ""+linePaints[i].pointsToUnlock,
+                            colorOutlineX,
+                            i*colorLineHeight + lockY - lineWidth/2,
+                            outlineWidth,
+                            Align.center,
+                            false
+                    );
+                }
+            }
+
+		    batch.end();
+
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+        }
 	}
 
 	@Override
