@@ -249,6 +249,7 @@ public class Roadline extends ApplicationAdapter {
 				if (!gameStarted) {
 				    if (currY >= height/2f - roadWidth/2f && currY <= height/2f + roadWidth/2f) {
                         gameStarted = true;
+                        lineColorsIndex = 0;
 
                         return true;
                     }
@@ -370,20 +371,14 @@ public class Roadline extends ApplicationAdapter {
 		}
 
 		if (linePaint.animated) {
-            shapeRenderer.setColor(
-                    lineColors[lineColorsIndex].r,
-                    lineColors[lineColorsIndex].g,
-                    lineColors[lineColorsIndex].b,
-                    1f);
-            if (gameStarted) {
-                lineColorsIndex++;
-                if (lineColorsIndex >= linePaint.colors.length) {
-                    lineColorsIndex = 0;
-                }
+		    lineColor = lineColors[lineColorsIndex];
+
+            lineColorsIndex++;
+            if (lineColorsIndex >= linePaint.colors.length) {
+                lineColorsIndex = 0;
             }
-        } else {
-            shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
         }
+        shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
 		for (i = 1; i < controller.getLinePoints().size(); i++) {
 			prevPoint = controller.getLinePoints().get(i-1);
 			currPoint = controller.getLinePoints().get(i);
@@ -439,21 +434,8 @@ public class Roadline extends ApplicationAdapter {
 			batch.end();
 			shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-            if (linePaint.animated) {
-                shapeRenderer.setColor(
-                        lineColors[lineColorsIndex].r,
-                        lineColors[lineColorsIndex].g,
-                        lineColors[lineColorsIndex].b,
-                        1f);
-                if (gameStarted) {
-                    lineColorsIndex++;
-                    if (lineColorsIndex >= linePaint.colors.length) {
-                        lineColorsIndex = 0;
-                    }
-                }
-            } else {
-                shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
-            }
+
+			shapeRenderer.setColor(lineColor.r, lineColor.g, lineColor.b, 1);
 			shapeRenderer.circle(colorCenterX, colorCenterY, colorRadius);
 
 			shapeRenderer.end();
