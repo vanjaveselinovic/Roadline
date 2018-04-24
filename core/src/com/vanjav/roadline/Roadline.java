@@ -306,7 +306,7 @@ public class Roadline extends ApplicationAdapter {
                             return true;
                         }
                     }
-                    else {
+                    else { //colorSelectionOpen
 				        if (currX < width - outlineWidth) {
 				            colorSelectionOpen = false;
 
@@ -323,10 +323,10 @@ public class Roadline extends ApplicationAdapter {
 				            for (inputPaintIndex = 0; inputPaintIndex < numColors; inputPaintIndex++) {
 				                if (currY > inputPaintIndex*colorLineHeight
                                         && currY < inputPaintIndex*colorLineHeight + colorLineHeight) {
-				                    if (highScore >= linePaints[inputPaintIndex].pointsToUnlock) {
+				                    if (highScore >= linePaints[inputPaintIndex].pointsToUnlock) { //unlocked
 				                        colorSelectionOpen = false;
 
-				                        if (!useGameOverLinePaint) {
+				                        if (gameOver && !useGameOverLinePaint) {
                                             gameOverLinePaint = linePaint;
                                             gameOverLineColor = gameOverLinePaint.color;
                                             gameOverLineColorsIndex = lineColorsIndex;
@@ -354,7 +354,7 @@ public class Roadline extends ApplicationAdapter {
 
 				                        return true;
                                     }
-                                    else {
+                                    else { //locked
 				                        return false;
                                     }
                                 }
