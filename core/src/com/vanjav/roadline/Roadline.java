@@ -610,9 +610,12 @@ public class Roadline extends ApplicationAdapter {
             }
 		}
 
-		if (gameStarted) {
+		if (gameStarted && !newHighScore) {
 			font500.draw(batch, ""+score, 0, scorePositionY, width, Align.center, false);
 		}
+		if (gameStarted && newHighScore) {
+		    font500.draw(batch, ""+highScore, 0, scorePositionY, width, Align.center, false);
+        }
 
 		if (gameOver) {
 		    if (newHighScore) {
