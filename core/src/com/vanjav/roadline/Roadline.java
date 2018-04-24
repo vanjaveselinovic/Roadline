@@ -96,7 +96,8 @@ public class Roadline extends ApplicationAdapter {
 	private TextureAtlas treesAtlas, otherAtlas;
 	private LinkedList<Sprite> treeSprites;
 	private float biggestTreeWidth;
-	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite, colorBaseSprite, colorHandSprite, lockSprite, unlockedSprite;
+	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite;
+	private Sprite colorBaseSprite, colorHandSprite, lockSprite, unlockedSprite, colorLockSprite, colorUnlockedSprite;
 
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
@@ -128,6 +129,9 @@ public class Roadline extends ApplicationAdapter {
 	private int lastAlreadyUnlocked = -1;
 
 	private int unlockFrameCount = 0;
+
+    private boolean showUnlockTease = false;
+    private int unlockTeaseFrameCount = 0;
 
 	@Override
 	public void create () {
@@ -275,6 +279,16 @@ public class Roadline extends ApplicationAdapter {
         unlockedSprite.setScale(textScale);
         unlockedSprite.setOrigin(0, 0);
 
+        colorLockSprite = otherAtlas.createSprite("colorlock");
+        colorLockSprite.setScale(textScale);
+        colorLockSprite.setOrigin(0, 0);
+        colorLockSprite.setPosition(width - colorLockSprite.getWidth()*colorLockSprite.getScaleX(), 0);
+
+        colorUnlockedSprite = otherAtlas.createSprite("colorunlocked");
+        colorUnlockedSprite.setScale(textScale);
+        colorUnlockedSprite.setOrigin(0, 0);
+        colorUnlockedSprite.setPosition(width - colorUnlockedSprite.getWidth()*colorUnlockedSprite.getScaleX(), 0);
+
 		shapeRenderer = new ShapeRenderer();
 
 		Gdx.input.setInputProcessor(new InputAdapter(){
@@ -316,6 +330,8 @@ public class Roadline extends ApplicationAdapter {
                             firstToUnlock = -1;
                             lastToUnlock = -1;
                             unlockFrameCount = 0;
+                            unlockTeaseFrameCount = 0;
+                            showUnlockTease = false;
 
 				            return true;
                         }
@@ -351,6 +367,8 @@ public class Roadline extends ApplicationAdapter {
                                         firstToUnlock = -1;
                                         lastToUnlock = -1;
                                         unlockFrameCount = 0;
+                                        unlockTeaseFrameCount = 0;
+                                        showUnlockTease = false;
 
 				                        return true;
                                     }
@@ -430,10 +448,17 @@ public class Roadline extends ApplicationAdapter {
 		gameStarted = false;
 		gameOver = false;
 		newHighScore = false;
+
 		lineColorsIndex = 0;
+
 		currCrashRadius = lineWidth;
+
 		useGameOverLinePaint = false;
+
 		unlockFrameCount = 0;
+
+        showUnlockTease = false;
+		unlockTeaseFrameCount = 0;
 	}
 
 	int gameOverLinePaintIndex;
@@ -469,6 +494,10 @@ public class Roadline extends ApplicationAdapter {
                         }
                         lastToUnlock = gameOverLinePaintIndex;
                     }
+                }
+
+                if (firstToUnlock > -1) {
+				    showUnlockTease = true;
                 }
 			}
         }
@@ -606,7 +635,21 @@ public class Roadline extends ApplicationAdapter {
                 shapeRenderer.end();
                 batch.begin();
 
-                colorHandSprite.draw(batch);
+                if (showUnlockTease) {
+                    if (unlockTeaseFrameCount < 30) {
+                        colorLockSprite.draw(batch);
+                    }
+                    else {
+                        colorUnlockedSprite.draw(batch);
+                    }
+
+                    unlockTeaseFrameCount++;
+                    if (unlockTeaseFrameCount >= 60) {
+                        unlockTeaseFrameCount = 0;
+                    }
+                } else {
+                    colorHandSprite.draw(batch);
+                }
             }
 		}
 

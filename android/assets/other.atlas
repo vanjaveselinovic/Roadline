@@ -13,6 +13,20 @@ colorbase
   index: -1
 colorhand
   rotate: false
+  xy: 1292, 186
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+colorlock
+  rotate: false
+  xy: 1034, 186
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+colorunlocked
+  rotate: false
   xy: 776, 186
   size: 256, 256
   orig: 256, 256
@@ -20,7 +34,7 @@ colorhand
   index: -1
 hand
   rotate: false
-  xy: 1034, 358
+  xy: 1550, 358
   size: 59, 84
   orig: 59, 84
   offset: 0, 0
