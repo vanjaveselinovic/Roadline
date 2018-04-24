@@ -40,10 +40,10 @@ public class Roadline extends ApplicationAdapter {
 	private Color shadowColor = new Color(0f, 0.282f, 0.353f, 1f);
 
     private LinePaint yellow = new LinePaint("yellow", new Color(1f, 0.792f, 0.271f,1f), 0);
-    private LinePaint white = new LinePaint("white", new Color(0.863f, 0.871f, 0.816f, 1f), 1);
-    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 2);
-    private LinePaint blue = new LinePaint("blue", new Color(0.271f, 0.871f, 1f, 1f), 3);
-    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 4);
+    private LinePaint white = new LinePaint("white", new Color(0.863f, 0.871f, 0.816f, 1f), 50);
+    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 75);
+    private LinePaint blue = new LinePaint("blue", new Color(0.271f, 0.871f, 1f, 1f), 100);
+    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 125);
     private LinePaint rainbow = new LinePaint(
             "rainbow",
             new Color[] {
@@ -56,7 +56,7 @@ public class Roadline extends ApplicationAdapter {
                     pink.color
             },
             10,
-            5
+            200
     );
     private LinePaint pulsar = new LinePaint(
             "pulsar",
@@ -65,7 +65,7 @@ public class Roadline extends ApplicationAdapter {
                     new Color(0f, 0f, 0f, 1f)
             },
             50,
-            6
+            300
     );
 
     private LinePaint[] linePaints = new LinePaint[] {
@@ -667,7 +667,7 @@ public class Roadline extends ApplicationAdapter {
                 }
 
 		        shapeRenderer.setColor(colorLineColor.r, colorLineColor.g, colorLineColor.b, 1f);
-		        shapeRenderer.rect(colorLineX, i * colorLineHeight, lineWidth, colorLineHeight);
+		        shapeRenderer.rect(colorLineX, i * colorLineHeight, lineWidth, colorLineHeight + 10);
             }
 
 		    shapeRenderer.end();
