@@ -127,6 +127,8 @@ public class Roadline extends ApplicationAdapter {
 	private int lastToUnlock = -1;
 	private int lastAlreadyUnlocked = -1;
 
+	private int unlockFrameCount = 0;
+
 	@Override
 	public void create () {
 	    width = Gdx.graphics.getWidth();
@@ -313,6 +315,7 @@ public class Roadline extends ApplicationAdapter {
 				            lastAlreadyUnlocked = lastToUnlock;
                             firstToUnlock = -1;
                             lastToUnlock = -1;
+                            unlockFrameCount = 0;
 
 				            return true;
                         }
@@ -347,6 +350,7 @@ public class Roadline extends ApplicationAdapter {
                                         lastAlreadyUnlocked = lastToUnlock;
                                         firstToUnlock = -1;
                                         lastToUnlock = -1;
+                                        unlockFrameCount = 0;
 
 				                        return true;
                                     }
@@ -429,6 +433,7 @@ public class Roadline extends ApplicationAdapter {
 		lineColorsIndex = 0;
 		currCrashRadius = lineWidth;
 		useGameOverLinePaint = false;
+		unlockFrameCount = 0;
 	}
 
 	int gameOverLinePaintIndex;
@@ -458,7 +463,7 @@ public class Roadline extends ApplicationAdapter {
 				lastToUnlock = -1;
 
 				for (gameOverLinePaintIndex = lastAlreadyUnlocked + 1; gameOverLinePaintIndex < numColors; gameOverLinePaintIndex++) {
-                    if (linePaints[gameOverLinePaintIndex].pointsToUnlock < highScore) {
+                    if (highScore >= linePaints[gameOverLinePaintIndex].pointsToUnlock) {
                         if (firstToUnlock == -1) {
                             firstToUnlock = gameOverLinePaintIndex;
                         }
@@ -668,7 +673,7 @@ public class Roadline extends ApplicationAdapter {
 
 		    for (i = 0; i < numColors; i++) {
 		        if (highScore < linePaints[i].pointsToUnlock) {
-		            lockSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2);
+		            lockSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2f);
 		            lockSprite.draw(batch);
 
 		            font75flat.draw(
@@ -683,9 +688,31 @@ public class Roadline extends ApplicationAdapter {
                 }
 
                 if (i >= firstToUnlock && i <= lastToUnlock) {
-                    unlockedSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2);
-                    unlockedSprite.draw(batch);
+                    if (unlockFrameCount < 15) {
+                        lockSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2f);
+                        lockSprite.draw(batch);
+
+                        font75flat.draw(
+                                batch,
+                                ""+linePaints[i].pointsToUnlock,
+                                colorOutlineX,
+                                i*colorLineHeight + lockY - lineWidth/2f,
+                                outlineWidth,
+                                Align.center,
+                                false
+                        );
+                    }
+                    else {
+                        unlockedSprite.setPosition(
+                                lockX + lineWidth,
+                                i*colorLineHeight + lockY + lineWidth/2f - ((unlockFrameCount-15)/75f)*height);
+                        unlockedSprite.draw(batch);
+                    }
                 }
+            }
+
+            if (firstToUnlock > -1 && unlockFrameCount < 90) {
+		        unlockFrameCount++;
             }
 
 		    batch.end();
