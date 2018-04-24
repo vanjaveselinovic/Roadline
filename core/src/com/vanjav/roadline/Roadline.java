@@ -133,6 +133,10 @@ public class Roadline extends ApplicationAdapter {
     private boolean showUnlockTease = false;
     private int unlockTeaseFrameCount = 0;
 
+    private int colorSelectionOpenFrameCount = 0;
+    private int colorSelectionCloseFrameCount = 0;
+    private float colorSelectionOffset = 0;
+
 	@Override
 	public void create () {
 	    width = Gdx.graphics.getWidth();
@@ -299,6 +303,7 @@ public class Roadline extends ApplicationAdapter {
 
 				if (!gameStarted || gameOver) {
 				    if (!colorSelectionOpen) {
+				        //vibrate toggle button
                         if (currX >= vibrateX1 && currX <= vibrateX2 && currY >= vibrateY1 && currY <= vibrateY2) {
                             vibrate = !vibrate;
                             if (vibrate) {
@@ -311,16 +316,21 @@ public class Roadline extends ApplicationAdapter {
                             return true;
                         }
 
+                        //color selection button
                         if (currX >= colorX1 && currX <= colorX2 && currY >= colorY1 && currY <= colorY2) {
                             colorSelectionOpen = true;
 
                             rainbowColorsIndex = 0;
                             pulsarColorsIndex = 0;
 
+                            colorSelectionOpenFrameCount = 0;
+                            colorSelectionOffset = 0;
+
                             return true;
                         }
                     }
                     else { //colorSelectionOpen
+                        //shadow
 				        if (currX < width - outlineWidth) {
 				            colorSelectionOpen = false;
 
@@ -332,9 +342,12 @@ public class Roadline extends ApplicationAdapter {
                             unlockFrameCount = 0;
                             unlockTeaseFrameCount = 0;
                             showUnlockTease = false;
+                            colorSelectionOpenFrameCount = 0;
+                            colorSelectionOffset = 0;
 
 				            return true;
                         }
+                        //color selection
                         else {
 				            for (inputPaintIndex = 0; inputPaintIndex < numColors; inputPaintIndex++) {
 				                if (currY > inputPaintIndex*colorLineHeight
@@ -369,6 +382,8 @@ public class Roadline extends ApplicationAdapter {
                                         unlockFrameCount = 0;
                                         unlockTeaseFrameCount = 0;
                                         showUnlockTease = false;
+                                        colorSelectionOpenFrameCount = 0;
+                                        colorSelectionOffset = 0;
 
 				                        return true;
                                     }
@@ -459,6 +474,9 @@ public class Roadline extends ApplicationAdapter {
 
         showUnlockTease = false;
 		unlockTeaseFrameCount = 0;
+
+		colorSelectionOpenFrameCount = 0;
+        colorSelectionOffset = 0;
 	}
 
 	int gameOverLinePaintIndex;
@@ -676,18 +694,23 @@ public class Roadline extends ApplicationAdapter {
 		batch.end();
 
 		if (colorSelectionOpen) {
+		    if (colorSelectionOpenFrameCount < 10) {
+		        colorSelectionOpenFrameCount++;
+		        colorSelectionOffset = outlineWidth - outlineWidth*(colorSelectionOpenFrameCount/10f);
+            }
+
 		    Gdx.gl.glEnable(GL20.GL_BLEND);
 
 		    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-		    shapeRenderer.setColor(shadowColor.r, shadowColor.g, shadowColor.b, 0.5f);
+		    shapeRenderer.setColor(shadowColor.r, shadowColor.g, shadowColor.b, 0.5f*(colorSelectionOpenFrameCount/10f));
 		    shapeRenderer.rect(0, 0, width, height);
 
 		    shapeRenderer.setColor(outlineColor.r, outlineColor.g, outlineColor.b, 1f);
-		    shapeRenderer.rect(colorOutlineX, 0, outlineWidth, height);
+		    shapeRenderer.rect(colorOutlineX + colorSelectionOffset, 0, outlineWidth, height);
 
 		    shapeRenderer.setColor(roadColor.r, roadColor.g, roadColor.b, 1f);
-		    shapeRenderer.rect(colorRoadX, 0, roadWidth, height);
+		    shapeRenderer.rect(colorRoadX + colorSelectionOffset, 0, roadWidth, height);
 
 		    for (i = 0; i < numColors; i++) {
 		        colorLineColor = linePaints[i].color;
@@ -710,7 +733,7 @@ public class Roadline extends ApplicationAdapter {
                 }
 
 		        shapeRenderer.setColor(colorLineColor.r, colorLineColor.g, colorLineColor.b, 1f);
-		        shapeRenderer.rect(colorLineX, i * colorLineHeight, lineWidth, colorLineHeight + 10);
+		        shapeRenderer.rect(colorLineX + colorSelectionOffset, i * colorLineHeight, lineWidth, colorLineHeight + 10);
             }
 
 		    shapeRenderer.end();
@@ -719,13 +742,13 @@ public class Roadline extends ApplicationAdapter {
 
 		    for (i = 0; i < numColors; i++) {
 		        if (highScore < linePaints[i].pointsToUnlock) {
-		            lockSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2f);
+		            lockSprite.setPosition(lockX + colorSelectionOffset, i*colorLineHeight + lockY + lineWidth/2f);
 		            lockSprite.draw(batch);
 
 		            font75flat.draw(
 		                    batch,
                             ""+linePaints[i].pointsToUnlock,
-                            colorOutlineX,
+                            colorOutlineX + colorSelectionOffset,
                             i*colorLineHeight + lockY - lineWidth/2,
                             outlineWidth,
                             Align.center,
@@ -735,13 +758,13 @@ public class Roadline extends ApplicationAdapter {
 
                 if (i >= firstToUnlock && i <= lastToUnlock) {
                     if (unlockFrameCount < 15) {
-                        lockSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2f);
+                        lockSprite.setPosition(lockX + colorSelectionOffset, i*colorLineHeight + lockY + lineWidth/2f);
                         lockSprite.draw(batch);
 
                         font75flat.draw(
                                 batch,
                                 ""+linePaints[i].pointsToUnlock,
-                                colorOutlineX,
+                                colorOutlineX + colorSelectionOffset,
                                 i*colorLineHeight + lockY - lineWidth/2f,
                                 outlineWidth,
                                 Align.center,
@@ -757,7 +780,7 @@ public class Roadline extends ApplicationAdapter {
                 }
             }
 
-            if (firstToUnlock > -1 && unlockFrameCount < 90) {
+            if (firstToUnlock > -1 && unlockFrameCount < 90 && colorSelectionOpenFrameCount >= 10) {
 		        unlockFrameCount++;
             }
 
