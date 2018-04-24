@@ -6,6 +6,7 @@ public class LinePaint {
     protected String name;
     protected Color color;
     protected int pointsToUnlock;
+    protected boolean showUnlock;
 
     protected boolean animated;
 
@@ -15,13 +16,13 @@ public class LinePaint {
         this.name = name;
         this.color = color;
         this.pointsToUnlock = pointsToUnlock;
+        this.showUnlock = false;
 
         animated = false;
     }
 
     public LinePaint(String name, Color[] colors, int framesPerColor, int pointsToUnlock) {
-        this.name = name;
-        this.color = colors[0];
+        this(name, colors[0], pointsToUnlock);
 
         this.colors = new Color[framesPerColor*colors.length];
 
@@ -42,8 +43,6 @@ public class LinePaint {
                 );
             }
         }
-
-        this.pointsToUnlock = pointsToUnlock;
 
         animated = true;
     }

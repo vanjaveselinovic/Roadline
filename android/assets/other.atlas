@@ -6,42 +6,49 @@ filter: Nearest,Nearest
 repeat: none
 colorbase
   rotate: false
-  xy: 2, 88
+  xy: 2, 186
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 colorhand
   rotate: false
-  xy: 776, 88
+  xy: 776, 186
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 hand
   rotate: false
-  xy: 2, 2
+  xy: 1034, 358
   size: 59, 84
   orig: 59, 84
   offset: 0, 0
   index: -1
 lock
   rotate: false
-  xy: 1034, 268
+  xy: 2, 2
   size: 62, 76
   orig: 62, 76
   offset: 0, 0
   index: -1
+unlocked
+  rotate: false
+  xy: 2, 80
+  size: 89, 104
+  orig: 89, 104
+  offset: 0, 0
+  index: -1
 vibrate0
   rotate: false
-  xy: 260, 88
+  xy: 260, 186
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 vibrate1
   rotate: false
-  xy: 518, 88
+  xy: 518, 186
   size: 256, 256
   orig: 256, 256
   offset: 0, 0

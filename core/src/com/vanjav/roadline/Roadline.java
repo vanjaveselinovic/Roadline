@@ -40,10 +40,10 @@ public class Roadline extends ApplicationAdapter {
 	private Color shadowColor = new Color(0f, 0.282f, 0.353f, 1f);
 
     private LinePaint yellow = new LinePaint("yellow", new Color(1f, 0.792f, 0.271f,1f), 0);
-    private LinePaint white = new LinePaint("white", new Color(0.863f, 0.871f, 0.816f, 1f), 50);
-    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 75);
-    private LinePaint blue = new LinePaint("blue", new Color(0.271f, 0.871f, 1f, 1f), 100);
-    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 125);
+    private LinePaint white = new LinePaint("white", new Color(0.863f, 0.871f, 0.816f, 1f), 5);
+    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 10);
+    private LinePaint blue = new LinePaint("blue", new Color(0.271f, 0.871f, 1f, 1f), 15);
+    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 20);
     private LinePaint rainbow = new LinePaint(
             "rainbow",
             new Color[] {
@@ -56,7 +56,7 @@ public class Roadline extends ApplicationAdapter {
                     pink.color
             },
             10,
-            200
+            25
     );
     private LinePaint pulsar = new LinePaint(
             "pulsar",
@@ -65,7 +65,7 @@ public class Roadline extends ApplicationAdapter {
                     new Color(0f, 0f, 0f, 1f)
             },
             50,
-            300
+            30
     );
 
     private LinePaint[] linePaints = new LinePaint[] {
@@ -96,7 +96,7 @@ public class Roadline extends ApplicationAdapter {
 	private TextureAtlas treesAtlas, otherAtlas;
 	private LinkedList<Sprite> treeSprites;
 	private float biggestTreeWidth;
-	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite, colorBaseSprite, colorHandSprite, lockSprite;
+	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite, colorBaseSprite, colorHandSprite, lockSprite, unlockedSprite;
 
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
@@ -122,6 +122,10 @@ public class Roadline extends ApplicationAdapter {
 	private Texture.TextureFilter filter = Texture.TextureFilter.Linear;
 
 	private int inputPaintIndex;
+
+	private int firstToUnlock = -1;
+	private int lastToUnlock = -1;
+	private int lastAlreadyUnlocked = -1;
 
 	@Override
 	public void create () {
@@ -265,6 +269,10 @@ public class Roadline extends ApplicationAdapter {
 
         lockY = colorLineHeight/2 - (lockHeight - font75flat.getCapHeight())/2;
 
+        unlockedSprite = otherAtlas.createSprite("unlocked");
+        unlockedSprite.setScale(textScale);
+        unlockedSprite.setOrigin(0, 0);
+
 		shapeRenderer = new ShapeRenderer();
 
 		Gdx.input.setInputProcessor(new InputAdapter(){
@@ -302,6 +310,10 @@ public class Roadline extends ApplicationAdapter {
 
 				            lineColor = linePaint.color;
 
+				            lastAlreadyUnlocked = lastToUnlock;
+                            firstToUnlock = -1;
+                            lastToUnlock = -1;
+
 				            return true;
                         }
                         else {
@@ -331,6 +343,10 @@ public class Roadline extends ApplicationAdapter {
 
 				                        preferences.putString("linePaintKey", linePaint.name);
 				                        preferences.flush();
+
+                                        lastAlreadyUnlocked = lastToUnlock;
+                                        firstToUnlock = -1;
+                                        lastToUnlock = -1;
 
 				                        return true;
                                     }
@@ -415,18 +431,40 @@ public class Roadline extends ApplicationAdapter {
 		useGameOverLinePaint = false;
 	}
 
+	int gameOverLinePaintIndex;
+
 	public void gameOver() {
 		if (gameStarted) {
 			gameOver = true;
+
 			if (vibrate) {
 				Gdx.input.vibrate(250);
 			}
 
 			if (score > highScore) {
+                for (gameOverLinePaintIndex = 0; gameOverLinePaintIndex < numColors; gameOverLinePaintIndex++) {
+                    if (highScore >= linePaints[gameOverLinePaintIndex].pointsToUnlock) {
+                        lastAlreadyUnlocked = gameOverLinePaintIndex;
+                    }
+                }
+
 				newHighScore = true;
 				highScore = score;
+
 				preferences.putInteger("highScore", highScore);
 				preferences.flush();
+
+				firstToUnlock = -1;
+				lastToUnlock = -1;
+
+				for (gameOverLinePaintIndex = lastAlreadyUnlocked + 1; gameOverLinePaintIndex < numColors; gameOverLinePaintIndex++) {
+                    if (linePaints[gameOverLinePaintIndex].pointsToUnlock < highScore) {
+                        if (firstToUnlock == -1) {
+                            firstToUnlock = gameOverLinePaintIndex;
+                        }
+                        lastToUnlock = gameOverLinePaintIndex;
+                    }
+                }
 			}
         }
 	}
@@ -642,6 +680,11 @@ public class Roadline extends ApplicationAdapter {
                             Align.center,
                             false
                     );
+                }
+
+                if (i >= firstToUnlock && i <= lastToUnlock) {
+                    unlockedSprite.setPosition(lockX, i*colorLineHeight + lockY + lineWidth/2);
+                    unlockedSprite.draw(batch);
                 }
             }
 
