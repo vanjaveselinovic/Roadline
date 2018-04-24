@@ -636,7 +636,7 @@ public class Roadline extends ApplicationAdapter {
                 batch.begin();
 
                 if (showUnlockTease) {
-                    if (unlockTeaseFrameCount < 30) {
+                    if (unlockTeaseFrameCount < 15) {
                         colorLockSprite.draw(batch);
                     }
                     else {
