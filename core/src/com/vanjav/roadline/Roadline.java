@@ -133,9 +133,10 @@ public class Roadline extends ApplicationAdapter {
     private boolean showUnlockTease = false;
     private int unlockTeaseFrameCount = 0;
 
-    private int colorSelectionOpenFrameCount = 0;
-    private int colorSelectionCloseFrameCount = 0;
+    private int colorSelectionFrameCount = 0;
     private float colorSelectionOffset = 0;
+    private boolean colorSelectionClosing = false;
+    private float colorSelectionShadowAlpha = 0;
 
 	@Override
 	public void create () {
@@ -317,13 +318,14 @@ public class Roadline extends ApplicationAdapter {
                         }
 
                         //color selection button
-                        if (currX >= colorX1 && currX <= colorX2 && currY >= colorY1 && currY <= colorY2) {
+                        if (currX >= colorX1 && currX <= colorX2 && currY >= colorY1 && currY <= colorY2
+                                && !colorSelectionClosing) {
                             colorSelectionOpen = true;
 
                             rainbowColorsIndex = 0;
                             pulsarColorsIndex = 0;
 
-                            colorSelectionOpenFrameCount = 0;
+                            colorSelectionFrameCount = 0;
                             colorSelectionOffset = 0;
 
                             return true;
@@ -342,8 +344,9 @@ public class Roadline extends ApplicationAdapter {
                             unlockFrameCount = 0;
                             unlockTeaseFrameCount = 0;
                             showUnlockTease = false;
-                            colorSelectionOpenFrameCount = 0;
+                            colorSelectionFrameCount = 0;
                             colorSelectionOffset = 0;
+                            colorSelectionClosing = true;
 
 				            return true;
                         }
@@ -382,8 +385,9 @@ public class Roadline extends ApplicationAdapter {
                                         unlockFrameCount = 0;
                                         unlockTeaseFrameCount = 0;
                                         showUnlockTease = false;
-                                        colorSelectionOpenFrameCount = 0;
+                                        colorSelectionFrameCount = 0;
                                         colorSelectionOffset = 0;
+                                        colorSelectionClosing = true;
 
 				                        return true;
                                     }
@@ -475,7 +479,7 @@ public class Roadline extends ApplicationAdapter {
         showUnlockTease = false;
 		unlockTeaseFrameCount = 0;
 
-		colorSelectionOpenFrameCount = 0;
+		colorSelectionFrameCount = 0;
         colorSelectionOffset = 0;
 	}
 
@@ -642,7 +646,7 @@ public class Roadline extends ApplicationAdapter {
 
 			colorBaseSprite.draw(batch);
 
-            if (!colorSelectionOpen) {
+            if (!colorSelectionOpen || (colorSelectionOpen && colorSelectionFrameCount < 10)) {
 
                 batch.end();
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -693,17 +697,26 @@ public class Roadline extends ApplicationAdapter {
 
 		batch.end();
 
-		if (colorSelectionOpen) {
-		    if (colorSelectionOpenFrameCount < 10) {
-		        colorSelectionOpenFrameCount++;
-		        colorSelectionOffset = outlineWidth - outlineWidth*(colorSelectionOpenFrameCount/10f);
+		if (colorSelectionOpen || colorSelectionClosing) {
+		    if (colorSelectionFrameCount < 10) {
+		        colorSelectionFrameCount++;
+		        if (!colorSelectionClosing) {
+                    colorSelectionOffset = outlineWidth - outlineWidth * (colorSelectionFrameCount / 10f);
+                    colorSelectionShadowAlpha = 0.5f * (colorSelectionFrameCount / 10f);
+                }
+                else {
+		            colorSelectionOffset = outlineWidth * (colorSelectionFrameCount / 10f);
+		            colorSelectionShadowAlpha = 0.5f - 0.5f * (colorSelectionFrameCount / 10f);
+                }
+            } else {
+		        colorSelectionClosing = false;
             }
 
 		    Gdx.gl.glEnable(GL20.GL_BLEND);
 
 		    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-		    shapeRenderer.setColor(shadowColor.r, shadowColor.g, shadowColor.b, 0.5f*(colorSelectionOpenFrameCount/10f));
+		    shapeRenderer.setColor(shadowColor.r, shadowColor.g, shadowColor.b, colorSelectionShadowAlpha);
 		    shapeRenderer.rect(0, 0, width, height);
 
 		    shapeRenderer.setColor(outlineColor.r, outlineColor.g, outlineColor.b, 1f);
@@ -780,7 +793,7 @@ public class Roadline extends ApplicationAdapter {
                 }
             }
 
-            if (firstToUnlock > -1 && unlockFrameCount < 90 && colorSelectionOpenFrameCount >= 10) {
+            if (firstToUnlock > -1 && unlockFrameCount < 90 && colorSelectionFrameCount >= 10) {
 		        unlockFrameCount++;
             }
 
