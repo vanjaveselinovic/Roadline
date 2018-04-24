@@ -40,10 +40,10 @@ public class Roadline extends ApplicationAdapter {
 	private Color shadowColor = new Color(0f, 0.282f, 0.353f, 1f);
 
     private LinePaint yellow = new LinePaint("yellow", new Color(1f, 0.792f, 0.271f,1f), 0);
-    private LinePaint white = new LinePaint("white", new Color(0.863f, 0.871f, 0.816f, 1f), 5);
-    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 10);
-    private LinePaint blue = new LinePaint("blue", new Color(0.271f, 0.871f, 1f, 1f), 15);
-    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 20);
+    private LinePaint white = new LinePaint("white", new Color(0.863f, 0.871f, 0.816f, 1f), 1);
+    private LinePaint orange = new LinePaint("orange", new Color(1f, 0.616f, 0.271f, 1f), 2);
+    private LinePaint blue = new LinePaint("blue", new Color(0.271f, 0.871f, 1f, 1f), 3);
+    private LinePaint pink = new LinePaint("pink", new Color(1f, 0.576f, 0.655f, 1f), 4);
     private LinePaint rainbow = new LinePaint(
             "rainbow",
             new Color[] {
@@ -56,7 +56,7 @@ public class Roadline extends ApplicationAdapter {
                     pink.color
             },
             10,
-            25
+            5
     );
     private LinePaint pulsar = new LinePaint(
             "pulsar",
@@ -65,7 +65,7 @@ public class Roadline extends ApplicationAdapter {
                     new Color(0f, 0f, 0f, 1f)
             },
             50,
-            30
+            6
     );
 
     private LinePaint[] linePaints = new LinePaint[] {
@@ -705,7 +705,7 @@ public class Roadline extends ApplicationAdapter {
                     else {
                         unlockedSprite.setPosition(
                                 lockX + lineWidth,
-                                i*colorLineHeight + lockY + lineWidth/2f - ((unlockFrameCount-15)/75f)*height);
+                                i*colorLineHeight + lockY + lineWidth/2f - (1f/(height*0.75f))*(float)Math.pow(((unlockFrameCount-15)/75f)*height, 2));
                         unlockedSprite.draw(batch);
                     }
                 }
