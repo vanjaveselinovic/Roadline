@@ -98,14 +98,16 @@ public class Roadline extends ApplicationAdapter {
 	private float biggestTreeWidth;
 	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite;
 	private Sprite colorBaseSprite, colorHandSprite, lockSprite, unlockedSprite, colorLockSprite, colorUnlockedSprite;
+	private Sprite bestSprite, newBestSprite;
 
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
 
 	private BitmapFont font500, font250, font125, font125flat, font75flat;
 	private float textScale, textHeight;
-	private float titlePositionY, instructionsPositionY, scorePositionY, bestPositionY, restartPositionY;
-	private float instructionsWidth;
+	private float titlePositionY, instructionsPositionY, scorePositionY;
+    private float bestPositionY, bestSpritePositionY, bestSpritePositionX, bestPositionX, restartPositionY;
+	private float instructionsWidth, bestSpriteWidth;
 
 	private float vibrateX1, vibrateY1, vibrateX2, vibrateY2;
 	private float colorCenterX, colorCenterY, colorRadius, colorX1, colorY1, colorX2, colorY2;
@@ -294,6 +296,17 @@ public class Roadline extends ApplicationAdapter {
 		colorUnlockedSprite.setOrigin(0, 0);
 		colorUnlockedSprite.setPosition(width - colorUnlockedSprite.getWidth()*colorUnlockedSprite.getScaleX(), 0);
 
+		bestSprite = otherAtlas.createSprite("best");
+		bestSprite.setScale(textScale);
+		bestSprite.setOrigin(0, 0);
+        bestSpriteWidth = bestSprite.getWidth()*bestSprite.getScaleX();
+        bestSpritePositionY = height - textHeight*2f - font250.getCapHeight() - 15*textScale;
+
+		newBestSprite = otherAtlas.createSprite("newbest");
+		newBestSprite.setScale(textScale);
+		newBestSprite.setOrigin(0, 0);
+		newBestSprite.setPosition(width/2f - newBestSprite.getWidth()*newBestSprite.getScaleX()/2f, bestSpritePositionY);
+
 		shapeRenderer = new ShapeRenderer();
 
 		Gdx.input.setInputProcessor(new InputAdapter(){
@@ -447,6 +460,10 @@ public class Roadline extends ApplicationAdapter {
 		if (linePaint.animated) {
 			lineColors = linePaint.colors;
 		}
+
+		bestSpritePositionX = (width - bestSpriteWidth*1.1f - new GlyphLayout(font250, ""+highScore).width)/2f;
+		bestSprite.setPosition(bestSpritePositionX, bestSpritePositionY);
+        bestPositionX = bestSpritePositionX + bestSpriteWidth*1.1f;
 
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -684,10 +701,12 @@ public class Roadline extends ApplicationAdapter {
 
 		if (gameOver) {
 			if (newHighScore) {
-				font250.draw(batch, "NEW BEST", 0, bestPositionY, width, Align.center, false);
+				//font250.draw(batch, "NEW BEST", 0, bestPositionY, width, Align.center, false);
+                newBestSprite.draw(batch);
 			}
 			else {
-				font250.draw(batch, "BEST "+highScore, 0, bestPositionY, width, Align.center, false);
+			    bestSprite.draw(batch);
+				font250.draw(batch, ""+highScore, bestPositionX, bestPositionY);
 			}
 
 			font125.draw(batch, "TAP TO RESTART", 0, restartPositionY, width, Align.center, false);
