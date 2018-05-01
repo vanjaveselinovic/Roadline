@@ -289,12 +289,12 @@ public class Controller {
         offsetX = -1*width*(deltaTimeSeconds/crossTime);
 
         if (roadPoints.size() > 0) {
-            roadPoints.getFirst().offset(offsetX * (0.8f + 0.4f*((height - roadPoints.getFirst().y)/height)), 0);
+            roadPoints.getFirst().offset(offsetX * (0.85f + 0.3f*((height - roadPoints.getFirst().y)/height)), 0);
             firstRoadPointToKeep = 0;
 
             for (l = 1; l < roadPoints.size(); l++) {
                 currPoint = roadPoints.get(l);
-                currPoint.offset(offsetX * (0.8f + 0.4f*((height - currPoint.y)/height)), 0);
+                currPoint.offset(offsetX * (0.85f + 0.3f*((height - currPoint.y)/height)), 0);
 
                 if (currPoint.x < 0 - outlineWidth)
                     firstRoadPointToKeep = l - 1;
@@ -308,7 +308,7 @@ public class Controller {
 
             for (l = 0; l < treePoints.size(); l++) {
                 currPoint = treePoints.get(l);
-                currPoint.offset(offsetX * (0.8f + 0.4f*((height - currPoint.y)/height)), 0);
+                currPoint.offset(offsetX * (0.85f + 0.3f*((height - currPoint.y)/height)), 0);
 
                 if (currPoint.x < -1 * width - biggestTreeWidth)
                     treePointsToRemove.add(currPoint);
@@ -320,12 +320,12 @@ public class Controller {
         if (linePoints.size() > 0) {
             pointToKeepFound = false;
 
-            linePoints.getFirst().offset(offsetX * (0.8f + 0.4f*((height - linePoints.getFirst().y)/height)), 0);
+            linePoints.getFirst().offset(offsetX * (0.85f + 0.3f*((height - linePoints.getFirst().y)/height)), 0);
             firstLinePointToKeep = 0;
 
             for (l = 1; l < linePoints.size(); l++) {
                 currPoint = linePoints.get(l);
-                currPoint.offset(offsetX * (0.8f + 0.4f*((height - currPoint.y)/height)), 0);
+                currPoint.offset(offsetX * (0.85f + 0.3f*((height - currPoint.y)/height)), 0);
 
                 if (!pointToKeepFound) {
                     if (currPoint.x < 0 - lineWidth) {
