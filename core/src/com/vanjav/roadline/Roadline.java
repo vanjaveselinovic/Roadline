@@ -461,9 +461,7 @@ public class Roadline extends ApplicationAdapter {
 			lineColors = linePaint.colors;
 		}
 
-		bestSpritePositionX = (width - bestSpriteWidth*1.1f - new GlyphLayout(font250, ""+highScore).width)/2f;
-		bestSprite.setPosition(bestSpritePositionX, bestSpritePositionY);
-        bestPositionX = bestSpritePositionX + bestSpriteWidth*1.1f;
+		setBestPosition();
 
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -538,8 +536,16 @@ public class Roadline extends ApplicationAdapter {
 				if (firstToUnlock > -1) {
 					showUnlockTease = true;
 				}
+
+				setBestPosition();
 			}
 		}
+	}
+
+	public void setBestPosition() {
+		bestSpritePositionX = (width - bestSpriteWidth*1.1f - new GlyphLayout(font250, ""+highScore).width)/2f;
+		bestSprite.setPosition(bestSpritePositionX, bestSpritePositionY);
+		bestPositionX = bestSpritePositionX + bestSpriteWidth*1.1f;
 	}
 
 	@Override
