@@ -98,19 +98,19 @@ public class Roadline extends ApplicationAdapter {
 	private float biggestTreeWidth;
 	private Sprite handSprite, vibrate1Sprite, vibrate0Sprite;
 	private Sprite colorBaseSprite, colorHandSprite, lockSprite, unlockedSprite, colorLockSprite, colorUnlockedSprite;
-	private Sprite bestSprite, newBestSprite;
+	private Sprite bestSprite, newBestSprite, vvGamesLogoSprite;
 
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
 
-	private BitmapFont font500, font250, font125, font125flat, font75flat;
+	private BitmapFont font500, font250, font125, font125flat, font75flat, font50flat;
 	private float textScale, textHeight;
 	private float titlePositionY, instructionsPositionY, scorePositionY;
     private float bestPositionY, bestSpritePositionY, bestSpritePositionX, bestPositionX, restartPositionY;
 	private float instructionsWidth, bestSpriteWidth;
 
 	private float vibrateX1, vibrateY1, vibrateX2, vibrateY2;
-	private float colorCenterX, colorCenterY, colorRadius, colorX1, colorY1, colorX2, colorY2;
+	private float colorCenterX, colorCenterY, colorRadius, colorX1, colorY1, colorX2, colorY2, copyrightY;
 	private float colorOutlineX, colorRoadX, colorLineX, numColors, colorLineHeight, lockX, lockY, lockWidth, lockHeight;
 
 	private String instructionsText = "HOLD     DRAG";
@@ -205,6 +205,10 @@ public class Roadline extends ApplicationAdapter {
 		font125flat.getRegion().getTexture().setFilter(filter, filter);
 		font125flat.getData().setScale(roadWidth/2 / font125flat.getData().capHeight);
 		instructionsWidth = new GlyphLayout(font125flat, instructionsText).width;
+
+		font50flat = new BitmapFont(Gdx.files.internal("font125flat.fnt"));
+		font50flat.getRegion().getTexture().setFilter(filter, filter);
+		font50flat.getData().setScale(textScale*0.4f);
 
 		if (instructionsWidth > width/2) {
 			float handSpriteOldWidth = handSprite.getWidth();
@@ -306,6 +310,14 @@ public class Roadline extends ApplicationAdapter {
 		newBestSprite.setScale(textScale);
 		newBestSprite.setOrigin(0, 0);
 		newBestSprite.setPosition(width/2f - newBestSprite.getWidth()*newBestSprite.getScaleX()/2f, bestSpritePositionY);
+
+		vvGamesLogoSprite = otherAtlas.createSprite("vvgameslogo");
+		vvGamesLogoSprite.setScale(textScale);
+		vvGamesLogoSprite.setOrigin(0, 0);
+		vvGamesLogoSprite.setPosition(
+		        width/2f - vvGamesLogoSprite.getWidth()*vvGamesLogoSprite.getScaleX()/2f,
+                vibrateY1 + vibrate1Sprite.getHeight()*vibrate1Sprite.getScaleY()/2 + font75flat.getCapHeight()/4f);
+		copyrightY = vibrateY1 + vibrate1Sprite.getHeight()*vibrate1Sprite.getScaleY()/2 - font75flat.getCapHeight()/4f;
 
 		shapeRenderer = new ShapeRenderer();
 
@@ -666,6 +678,9 @@ public class Roadline extends ApplicationAdapter {
 			else {
 				vibrate0Sprite.draw(batch);
 			}
+
+			vvGamesLogoSprite.draw(batch);
+			font50flat.draw(batch, "©2018 VV GAMES", 0, copyrightY, width, Align.center, false);
 
 			colorBaseSprite.draw(batch);
 

@@ -13,28 +13,28 @@ best
   index: -1
 colorbase
   rotate: false
-  xy: 260, 88
+  xy: 2, 88
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 colorhand
   rotate: false
-  xy: 2, 88
+  xy: 1292, 254
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 colorlock
   rotate: false
-  xy: 1292, 254
+  xy: 1034, 254
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 colorunlocked
   rotate: false
-  xy: 1034, 254
+  xy: 776, 254
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
@@ -48,7 +48,7 @@ hand
   index: -1
 lock
   rotate: false
-  xy: 1550, 434
+  xy: 63, 10
   size: 62, 76
   orig: 62, 76
   offset: 0, 0
@@ -69,15 +69,22 @@ unlocked
   index: -1
 vibrate0
   rotate: false
-  xy: 518, 88
+  xy: 260, 88
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 vibrate1
   rotate: false
-  xy: 776, 254
+  xy: 518, 88
   size: 256, 256
   orig: 256, 256
+  offset: 0, 0
+  index: -1
+vvgameslogo
+  rotate: false
+  xy: 1550, 471
+  size: 112, 39
+  orig: 112, 39
   offset: 0, 0
   index: -1
