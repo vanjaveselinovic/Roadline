@@ -231,8 +231,8 @@ public class Roadline extends ApplicationAdapter {
 		bestPositionY = height - textHeight*2;
 		restartPositionY = height - bestPositionY;
 
-		vibrateX1 = 0;
-		vibrateY1 = 0;
+		vibrateX1 = textHeight/4;
+		vibrateY1 = textHeight/4;
 
 		vibrate1Sprite = otherAtlas.createSprite("vibrate1");
 		vibrate1Sprite.setScale(textScale);
@@ -250,12 +250,12 @@ public class Roadline extends ApplicationAdapter {
 		colorBaseSprite  = otherAtlas.createSprite("colorbase");
 		colorBaseSprite.setScale(textScale);
 		colorBaseSprite.setOrigin(0, 0);
-		colorBaseSprite.setPosition(width - colorBaseSprite.getWidth()*colorBaseSprite.getScaleX(), 0);
+		colorBaseSprite.setPosition(width - colorBaseSprite.getWidth()*colorBaseSprite.getScaleX() - vibrateX1, vibrateY1);
 
 		colorHandSprite  = otherAtlas.createSprite("colorhand");
 		colorHandSprite.setScale(textScale);
 		colorHandSprite.setOrigin(0, 0);
-		colorHandSprite.setPosition(width - colorHandSprite.getWidth()*colorHandSprite.getScaleX(), 0);
+		colorHandSprite.setPosition(width - colorHandSprite.getWidth()*colorHandSprite.getScaleX() - vibrateX1, vibrateY1);
 
 		colorCenterX = colorBaseSprite.getX() + colorBaseSprite.getWidth()*colorBaseSprite.getScaleX()/2;
 		colorCenterY = colorBaseSprite.getY() + colorBaseSprite.getHeight()*colorBaseSprite.getScaleY()/2;
@@ -293,12 +293,12 @@ public class Roadline extends ApplicationAdapter {
 		colorLockSprite = otherAtlas.createSprite("colorlock");
 		colorLockSprite.setScale(textScale);
 		colorLockSprite.setOrigin(0, 0);
-		colorLockSprite.setPosition(width - colorLockSprite.getWidth()*colorLockSprite.getScaleX(), 0);
+		colorLockSprite.setPosition(width - colorLockSprite.getWidth()*colorLockSprite.getScaleX() - vibrateX1, vibrateY1);
 
 		colorUnlockedSprite = otherAtlas.createSprite("colorunlocked");
 		colorUnlockedSprite.setScale(textScale);
 		colorUnlockedSprite.setOrigin(0, 0);
-		colorUnlockedSprite.setPosition(width - colorUnlockedSprite.getWidth()*colorUnlockedSprite.getScaleX(), 0);
+		colorUnlockedSprite.setPosition(width - colorUnlockedSprite.getWidth()*colorUnlockedSprite.getScaleX() - vibrateX1, vibrateY1);
 
 		bestSprite = otherAtlas.createSprite("best");
 		bestSprite.setScale(textScale);
