@@ -462,46 +462,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5817739D1E37A10D004E28A9 /* custom.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = 3R9TCJNKA3;
-				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"${MOE_FRAMEWORK_PATH}",
+				ARCHS = (
+					arm64,
+					armv7,
 				);
-				INFOPLIST_FILE = "ios-moe/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MOE_COPY_ANDROID_CACERTS = NO;
-				MOE_FRAMEWORK_PATH = "${MOE_SDK_PATH}/sdk/${PLATFORM_NAME}";
-				MOE_OTHER_LDFLAGS = "${MOE_SECT_OAT} ${MOE_SECT_ART} ${MOE_SEGPROT} ${MOE_PAGEZERO} ${MOE_CUSTOM_OTHER_LDFLAGS} -lstdc++ -framework MOE";
-				"MOE_PAGEZERO[sdk=iphoneos*]" = "";
-				"MOE_PAGEZERO[sdk=iphonesimulator*]" = "-pagezero_size 4096";
-				MOE_PROJECT_BUILD_DIR = "${MOE_PROJECT_DIR}/build";
-				MOE_PROJECT_DIR = "${SRCROOT}/../";
-				MOE_SDK_PATH = "${MOE_PROJECT_BUILD_DIR}/moe/sdk";
-				MOE_SECT_ART = "-sectcreate __ARTDATA __artdata \"${MOE_PROJECT_BUILD_DIR}/moe/main/xcode/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/${arch}.art\"";
-				MOE_SECT_OAT = "-sectcreate __OATDATA __oatdata \"${MOE_PROJECT_BUILD_DIR}/moe/main/xcode/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/${arch}.oat\"";
-				"MOE_SEGPROT[sdk=iphoneos*]" = "-segprot __OATDATA rx rx -segprot __ARTDATA rw rw";
-				"MOE_SEGPROT[sdk=iphonesimulator*]" = "-segprot __OATDATA rwx rx -segprot __ARTDATA rwx rw";
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"${MOE_OTHER_LDFLAGS}",
-					"$(LIBGDX_NATIVES)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.vanjav.roadline;
-				PRODUCT_NAME = Roadline;
-				STRIP_STYLE = "non-global";
-			};
-			name = Debug;
-		};
-		58C6F53D1DA66CB600309CB6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5817739D1E37A10D004E28A9 /* custom.xcconfig */;
-			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -535,6 +499,52 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.vanjav.roadline;
 				PRODUCT_NAME = Roadline;
 				STRIP_STYLE = "non-global";
+				VALID_ARCHS = "arm64 armv7";
+			};
+			name = Debug;
+		};
+		58C6F53D1DA66CB600309CB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5817739D1E37A10D004E28A9 /* custom.xcconfig */;
+			buildSettings = {
+				ARCHS = (
+					arm64,
+					armv7,
+				);
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 3R9TCJNKA3;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"${MOE_FRAMEWORK_PATH}",
+				);
+				INFOPLIST_FILE = "ios-moe/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MOE_COPY_ANDROID_CACERTS = NO;
+				MOE_FRAMEWORK_PATH = "${MOE_SDK_PATH}/sdk/${PLATFORM_NAME}";
+				MOE_OTHER_LDFLAGS = "${MOE_SECT_OAT} ${MOE_SECT_ART} ${MOE_SEGPROT} ${MOE_PAGEZERO} ${MOE_CUSTOM_OTHER_LDFLAGS} -lstdc++ -framework MOE";
+				"MOE_PAGEZERO[sdk=iphoneos*]" = "";
+				"MOE_PAGEZERO[sdk=iphonesimulator*]" = "-pagezero_size 4096";
+				MOE_PROJECT_BUILD_DIR = "${MOE_PROJECT_DIR}/build";
+				MOE_PROJECT_DIR = "${SRCROOT}/../";
+				MOE_SDK_PATH = "${MOE_PROJECT_BUILD_DIR}/moe/sdk";
+				MOE_SECT_ART = "-sectcreate __ARTDATA __artdata \"${MOE_PROJECT_BUILD_DIR}/moe/main/xcode/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/${arch}.art\"";
+				MOE_SECT_OAT = "-sectcreate __OATDATA __oatdata \"${MOE_PROJECT_BUILD_DIR}/moe/main/xcode/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/${arch}.oat\"";
+				"MOE_SEGPROT[sdk=iphoneos*]" = "-segprot __OATDATA rx rx -segprot __ARTDATA rw rw";
+				"MOE_SEGPROT[sdk=iphonesimulator*]" = "-segprot __OATDATA rwx rx -segprot __ARTDATA rwx rw";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"${MOE_OTHER_LDFLAGS}",
+					"$(LIBGDX_NATIVES)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vanjav.roadline;
+				PRODUCT_NAME = Roadline;
+				STRIP_STYLE = "non-global";
+				VALID_ARCHS = "arm64 armv7";
 			};
 			name = Release;
 		};
