@@ -38,6 +38,7 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 // Setup Multi-OS Engine
 moe {
     xcode {
+        proguardLevel 'all'
         project 'xcode/ios-moe.xcodeproj'
         mainTarget 'ios-moe'
         testTarget 'ios-moe-Test'
